@@ -93,6 +93,55 @@ $('#mobileMenu').onclick=()=>$('#sidebar').classList.toggle('open');$('#refreshB
 render();loadNews();
 
 
+const layerDefaults={
+ masthead:{x:.05,y:.025,w:.9,h:.16,color:'#ffffff',opacity:1,size:1},
+ category:{x:.04,y:.19,w:.92,h:.045,color:'#ffd21a',opacity:1,size:1},
+ photo:{x:0,y:.235,w:1,h:.385,color:'#17202b',opacity:1,size:1},
+ headline:{x:.04,y:.635,w:.92,h:.285,color:'#ed1c2e',opacity:1,size:1},
+ footer:{x:0,y:.94,w:1,h:.06,color:'#ed1c2e',opacity:1,size:1}
+};
+let activeLayer='headline',layerSettings=JSON.parse(JSON.stringify(layerDefaults)),savedTemplateName='';
+function cloneLayers(v){return JSON.parse(JSON.stringify(v))}
+function loadLayerPreset(){
+ const key='novaDailyTemplate_'+($('#templateSelect')?.value||'general');
+ try{const v=JSON.parse(localStorage.getItem(key)||'null');layerSettings=v&&v.layers? v.layers:cloneLayers(layerDefaults);savedTemplateName=v?.name||''}
+ catch{layerSettings=cloneLayers(layerDefaults);savedTemplateName=''}
+}
+function saveLayerPreset(){
+ const name=($('#templateName')?.value||'').trim();if(!name){toast('Enter a template name first');return}
+ const key='novaDailyTemplate_'+($('#templateSelect')?.value||'general');
+ localStorage.setItem(key,JSON.stringify({name,layers:layerSettings,savedAt:new Date().toISOString()}));
+ savedTemplateName=name;toast('Template saved in this browser');
+}
+function updateLayerControl(){
+ const l=layerSettings[activeLayer];if(!l)return;
+ if($('#layerColor'))$('#layerColor').value=l.color;
+ if($('#layerOpacity'))$('#layerOpacity').value=Math.round(l.opacity*100);
+ if($('#layerSize'))$('#layerSize').value=Math.round(l.size*100);
+ if($('#templateName')&&!$('#templateName').value)$('#templateName').value=savedTemplateName;
+}
+function applyLayerControls(){
+ const l=layerSettings[activeLayer];if(!l)return;
+ l.color=$('#layerColor').value;l.opacity=Number($('#layerOpacity').value)/100;l.size=Number($('#layerSize').value)/100;
+ drawPosters();
+}
+function setupLayerEditor(){
+ loadLayerPreset();
+ $('#layerSelect').value=activeLayer;updateLayerControl();
+ $('#layerSelect').onchange=()=>{activeLayer=$('#layerSelect').value;updateLayerControl()};
+ ['layerColor','layerOpacity','layerSize'].forEach(id=>$('#'+id).addEventListener('input',applyLayerControls));
+ $('#saveTemplate').onclick=saveLayerPreset;
+ $('#resetTemplate').onclick=()=>{layerSettings=cloneLayers(layerDefaults);savedTemplateName='';updateLayerControl();drawPosters();toast('Default layout restored')};
+}
+function layerBox(type,w,h){
+ const l=layerSettings[type];return {x:l.x*w,y:l.y*h,w:l.w*w,h:l.h*h};
+}
+
+function enableObjectDrag(canvas){
+ let moving=false,lastX=0,lastY=0;canvas.addEventListener('pointerdown',e=>{const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;const order=['footer','headline','photo','category','masthead'];const hit=order.find(k=>{const l=layerSettings[k];return x>=l.x&&x<=l.x+l.w&&y>=l.y&&y<=l.y+l.h});if(!hit)return;activeLayer=hit;if($('#layerSelect'))$('#layerSelect').value=hit;updateLayerControl();moving=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId);canvas.style.outline='2px solid #ffd21a';});
+ canvas.addEventListener('pointermove',e=>{if(!moving)return;const r=canvas.getBoundingClientRect(),l=layerSettings[activeLayer];l.x=Math.max(-.1,Math.min(1-l.w+.1,l.x+(e.clientX-lastX)/r.width));l.y=Math.max(0,Math.min(1-l.h,l.y+(e.clientY-lastY)/r.height));lastX=e.clientX;lastY=e.clientY;drawPosters()});
+ const stop=()=>{moving=false;canvas.style.outline='none'};canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);
+}
 function makeImagePrompt(story){
  return 'Create a photorealistic editorial news photograph for NOVA DAILY. STORY: '+story.title+'. CATEGORY: '+story.category+'. CONTEXT: '+story.summary+'. Show a realistic scene that directly illustrates this specific story, in credible documentary photojournalism style, natural lighting, professional camera quality, strong clear subject, premium American news-media look. Portrait 4:5 composition, with clean negative space in the lower third for an accurate headline overlay. Dramatic but believable, not sensationalized. Do not invent identifiable people, logos, official seals, readable signs, words, captions, watermarks, dates, statistics or extra facts. No text in image. Create only the background photograph; NOVA DAILY will add the headline and branding separately. Pinterest version will be adapted to 2:3.';
 }
@@ -114,7 +163,7 @@ function renderCreate(){
  '<div class="embedded-thumbnail"><div class="platform-head"><h3>Facebook thumbnail</h3><span class="platform-size">3:4 · 1080 × 1440</span></div><div class="field"><label>THUMBNAIL HEADLINE</label><input id="fbImageHeadline" value="'+esc(s.title)+'"></div><canvas id="fbCanvas" width="1080" height="1440" aria-label="Facebook thumbnail preview"></canvas><button class="button" id="resetFbImage">Reset photo position</button><button class="button button-primary" id="downloadFb">Download Facebook thumbnail</button></div></section>'+
  '<section class="tool-card"><div class="platform-head"><h3>Pinterest pin</h3><span class="platform-size">SEO content</span></div><div class="field"><label>PIN TITLE — EDITABLE</label><input id="pinTitle" value="'+esc(s.title+' | NOVA DAILY')+'"></div><div class="field"><label>DESCRIPTION — EDITABLE</label><textarea id="pinDescription" rows="5">'+esc(makePin(s))+'</textarea></div><div class="source-credit"><span>Source</span><a href="'+esc(s.url||'#')+'" target="_blank" rel="noopener">'+esc(s.source||'Original report')+' ↗</a></div><div class="field"><label>KEYWORDS / TAGS</label><input id="pinTags" value="'+esc('USA News, '+s.category+', Latest News, NOVA DAILY')+'"></div><div class="field"><label>FACEBOOK POST LINK</label><input id="fbLink" placeholder="Paste Facebook post URL after publishing"></div><button class="button button-primary" id="copyPin">Copy Pinterest content</button>'+
  '<div class="embedded-thumbnail"><div class="platform-head"><h3>Pinterest thumbnail</h3><span class="platform-size">2:3 · 1080 × 1620</span></div><div class="field"><label>THUMBNAIL HEADLINE</label><input id="pinImageHeadline" value="'+esc(s.title)+'"></div><canvas id="pinCanvas" width="1080" height="1620" aria-label="Pinterest thumbnail preview"></canvas><button class="button" id="resetPinImage">Reset photo position</button><button class="button button-primary" id="downloadPin">Download Pinterest thumbnail</button></div></section></div>'+
- '<section class="tool-card template-controls"><div class="platform-head"><div><h3>Thumbnail design templates</h3><p class="feed-note">Choose between the standard General News design and the urgent Breaking News design.</p></div><span class="status-badge">2 NOVA DAILY designs</span></div><div class="field"><label>SELECT THUMBNAIL TEMPLATE</label><select id="templateSelect">'+optionHtml+'</select></div><div class="image-actions"><label class="button upload-button" for="imageUpload">↑ Upload / replace photo</label><input id="imageUpload" type="file" accept="image/*" hidden><button class="button" id="copyImagePrompt">Copy image prompt</button><button class="button" id="clearImage">Remove uploaded photo</button></div><div class="field"><label>STORY-SPECIFIC IMAGE PROMPT</label><textarea id="imagePrompt" rows="4" readonly>'+esc(makeImagePrompt(s))+'</textarea></div><p class="editor-hint">Upload a clean news photo, then drag it inside either preview to reposition. Scroll over a preview to zoom. Headline areas are kept separate from the photo to prevent text overlap.</p></section>'+
+ '<section class="tool-card template-controls"><div class="platform-head"><div><h3>Thumbnail design templates</h3><p class="feed-note">Choose between the standard General News design and the urgent Breaking News design.</p></div><span class="status-badge">2 NOVA DAILY designs</span></div><div class="field"><label>SELECT THUMBNAIL TEMPLATE</label><select id="templateSelect">'+optionHtml+'</select></div><div class="image-actions"><label class="button upload-button" for="imageUpload">↑ Upload / replace photo</label><input id="imageUpload" type="file" accept="image/*" hidden><button class="button" id="copyImagePrompt">Copy image prompt</button><button class="button" id="clearImage">Remove uploaded photo</button></div><div class="field"><label>STORY-SPECIFIC IMAGE PROMPT</label><textarea id="imagePrompt" rows="4" readonly>'+esc(makeImagePrompt(s))+'</textarea></div><div class="layer-editor"><div class="platform-head"><div><h3>Template object editor</h3><p class="feed-note">Select an object, drag it on the preview, then adjust its colour, opacity and size.</p></div><span class="status-badge">CUSTOM LAYERS</span></div><div class="field"><label>SELECT OBJECT</label><select id="layerSelect"><option value="masthead">NOVA DAILY masthead</option><option value="category">Category ribbon</option><option value="photo">Photo frame</option><option value="headline">Headline panel</option><option value="footer">Footer / source</option></select></div><div class="layer-controls"><div class="field"><label>OBJECT COLOUR</label><input id="layerColor" type="color" value="#ed1c2e"></div><div class="field"><label>OPACITY <span id="opacityValue">100%</span></label><input id="layerOpacity" type="range" min="0" max="100" value="100"></div><div class="field"><label>SIZE <span id="sizeValue">100%</span></label><input id="layerSize" type="range" min="50" max="160" value="100"></div></div><div class="field"><label>SAVE TEMPLATE NAME</label><input id="templateName" placeholder="e.g. NOVA Daily Premium Red"></div><div class="image-actions"><button class="button button-primary" id="saveTemplate">Save this template</button><button class="button" id="resetTemplate">Reset default layout</button></div><p class="editor-hint">Saved templates are kept in this browser on this device. Choose General News or Breaking News to edit and save each design separately.</p></div><p class="editor-hint">Upload a clean news photo, then drag it inside either preview to reposition. Scroll over a preview to zoom. Headline areas are kept separate from the photo to prevent text overlap.</p></section>'+
  '<p class="feed-note">The selected template is used for both platforms, with each thumbnail automatically composed to its correct aspect ratio. Check the headline and image before publishing.</p>';
  $('#templateSelect').value=s.isBreaking?'breaking':'general';
  $('#copyFb').onclick=()=>copy([$('#fbHeadline').value,$('#fbBody').value,'Source: '+(s.source||'Original report')+(s.url?' — '+s.url:''),$('#fbTags').value].join('\n\n'));
@@ -124,8 +173,8 @@ function renderCreate(){
  $('#clearImage').onclick=()=>{if(uploadedPhotoUrl)URL.revokeObjectURL(uploadedPhotoUrl);uploadedPhoto=null;uploadedPhotoUrl='';$('#imageUpload').value='';drawPosters();toast('Uploaded photo removed')};
  ['fbImageHeadline','pinImageHeadline'].forEach(id=>$('#'+id).addEventListener('input',drawPosters));
  $('#fbHeadline').addEventListener('input',()=>{if($('#fbImageHeadline'))$('#fbImageHeadline').value=$('#fbHeadline').value;drawPosters()});
- $('#templateSelect').addEventListener('change',drawPosters);
- drawPosters();enableImageDrag($('#fbCanvas'),'facebook');enableImageDrag($('#pinCanvas'),'pinterest');
+ $('#templateSelect').addEventListener('change',()=>{setupLayerEditor();drawPosters()});
+ setupLayerEditor();drawPosters();enableImageDrag($('#fbCanvas'),'facebook');enableImageDrag($('#pinCanvas'),'pinterest');enableObjectDrag($('#fbCanvas'));enableObjectDrag($('#pinCanvas'));
  $('#resetFbImage').onclick=()=>{imagePlacement.facebook={x:0,y:0,zoom:1};drawPosters();toast('Facebook photo position reset')};
  $('#resetPinImage').onclick=()=>{imagePlacement.pinterest={x:0,y:0,zoom:1};drawPosters();toast('Pinterest photo position reset')};
  $('#downloadFb').onclick=()=>downloadCanvas('fbCanvas','nova-daily-facebook-3x4.png');
@@ -134,88 +183,33 @@ function renderCreate(){
 function drawPosters(){if(!selectedStory)return;drawPoster($('#fbCanvas'),selectedStory,'facebook');drawPoster($('#pinCanvas'),selectedStory,'pinterest')}
 function drawPoster(c,story,type){
  const ctx=c.getContext('2d'),w=c.width,h=c.height,photo=uploadedPhoto,place=imagePlacement[type];
- const template=$('#templateSelect')?.value||(story.isBreaking?'breaking':'general');
- const breaking=template==='breaking';
- const red='#ed1c2e',yellow='#ffd21a',black='#08090d',white='#fff';
- const photoTop=h*.235,photoH=h*.385,photoBottom=photoTop+photoH;
- const titleId=type==='facebook'?'fbImageHeadline':'pinImageHeadline';
- const headline=($('#'+titleId)?.value||story.title||'LATEST NEWS').trim();
- const source=(story.source||'NEWS DESK').toUpperCase().slice(0,28);
- ctx.clearRect(0,0,w,h);
- // Fixed background and masthead: photo uploads never affect these coordinates.
- const bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,breaking?'#26070b':'#101319');bg.addColorStop(1,black);
- ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
- ctx.fillStyle=black;ctx.fillRect(0,0,w,h*.19);
- // Subtle dotted world-map texture in the masthead.
- ctx.save();ctx.globalAlpha=.20;ctx.fillStyle=breaking?red:'#9aa2ad';
- for(let yy=h*.035;yy<h*.17;yy+=h*.014){
-  for(let xx=w*.48;xx<w*.96;xx+=w*.018){
-   const wave=Math.sin(xx/w*13)*Math.cos(yy/h*19);
-   if(wave>.08) {ctx.beginPath();ctx.arc(xx,yy,Math.max(1,w*.0022),0,Math.PI*2);ctx.fill()}
-  }
- }
- ctx.restore();
- // Signature NOVA DAILY masthead and red slash mark.
- ctx.fillStyle=red;ctx.beginPath();ctx.moveTo(w*.055,h*.145);ctx.lineTo(w*.105,h*.045);ctx.lineTo(w*.155,h*.045);ctx.lineTo(w*.105,h*.145);ctx.closePath();ctx.fill();
- ctx.beginPath();ctx.moveTo(w*.115,h*.145);ctx.lineTo(w*.165,h*.045);ctx.lineTo(w*.215,h*.045);ctx.lineTo(w*.165,h*.145);ctx.closePath();ctx.fill();
- ctx.fillStyle=white;ctx.textAlign='left';ctx.textBaseline='alphabetic';
- ctx.font='900 '+Math.round(w*.073)+'px Arial';ctx.fillText('NOVA',w*.235,h*.092);
- ctx.font='600 '+Math.round(w*.046)+'px Arial';ctx.fillText('DAILY',w*.237,h*.15);
- // Fixed category ribbon.
- ctx.fillStyle=red;ctx.fillRect(0,h*.19,w,h*.012);
- ctx.fillStyle=yellow;ctx.fillRect(0,h*.202,w,h*.033);
- ctx.fillStyle=black;ctx.font='900 '+Math.round(w*.029)+'px Arial';
- ctx.fillText(breaking?'BREAKING NEWS':(story.category||'WORLD NEWS').toUpperCase().slice(0,26),w*.065,h*.226);
- // Photo is the only uploaded/replaceable layer; its frame never changes.
- ctx.fillStyle='#17202b';ctx.fillRect(0,photoTop,w,photoH);
- if(photo){
-  const scale=Math.max(w/photo.width,photoH/photo.height)*place.zoom,iw=photo.width*scale,ih=photo.height*scale;
-  ctx.save();ctx.beginPath();ctx.rect(0,photoTop,w,photoH);ctx.clip();
-  ctx.drawImage(photo,(w-iw)/2+place.x*w,photoTop+(photoH-ih)/2+place.y*photoH,iw,ih);ctx.restore();
-  const shade=ctx.createLinearGradient(0,photoTop,0,photoBottom);shade.addColorStop(0,'#00000008');shade.addColorStop(1,'#00000055');ctx.fillStyle=shade;ctx.fillRect(0,photoTop,w,photoH);
- }else{
-  const ph=ctx.createLinearGradient(0,photoTop,w,photoBottom);ph.addColorStop(0,breaking?'#63202a':'#31445c');ph.addColorStop(1,'#111722');ctx.fillStyle=ph;ctx.fillRect(0,photoTop,w,photoH);
-  ctx.fillStyle='#ffffff30';ctx.font='900 '+Math.round(w*.09)+'px Arial';ctx.fillText('NEWS PHOTO',w*.07,photoTop+photoH*.56);
- }
- // Lower headline panel and fixed graphic accents.
- const panelY=photoBottom,panelH=h*.31;
- ctx.fillStyle=breaking?'#25080d':black;ctx.fillRect(0,panelY,w,panelH);
- if(breaking){
-  ctx.fillStyle=red;ctx.beginPath();ctx.moveTo(w*.06,panelY+h*.025);ctx.lineTo(w*.91,panelY+h*.025);ctx.lineTo(w*.86,panelY+h*.09);ctx.lineTo(w*.03,panelY+h*.09);ctx.closePath();ctx.fill();
-  ctx.fillStyle=white;ctx.font='italic 900 '+Math.round(w*.064)+'px Arial';ctx.fillText('BREAKING',w*.105,panelY+h*.078);
-  ctx.fillStyle=yellow;ctx.beginPath();ctx.moveTo(w*.25,panelY+h*.095);ctx.lineTo(w*.86,panelY+h*.095);ctx.lineTo(w*.82,panelY+h*.155);ctx.lineTo(w*.21,panelY+h*.155);ctx.closePath();ctx.fill();
-  ctx.fillStyle=black;ctx.font='italic 900 '+Math.round(w*.057)+'px Arial';ctx.fillText('NEWS',w*.36,panelY+h*.143);
- }else{
-  ctx.fillStyle=yellow;ctx.beginPath();ctx.moveTo(0,panelY+h*.018);ctx.lineTo(w*.61,panelY+h*.018);ctx.lineTo(w*.66,panelY+h*.075);ctx.lineTo(0,panelY+h*.075);ctx.closePath();ctx.fill();
-  ctx.fillStyle=black;ctx.font='900 '+Math.round(w*.035)+'px Arial';ctx.fillText('◉  WORLD NEWS',w*.065,panelY+h*.06);
- }
- const textTop=breaking?panelY+h*.18:panelY+h*.105;
- const textBottom=h*.925;
- const maxW=w*.87,maxH=textBottom-textTop;
- let fontSize=Math.round(w*(breaking?.066:.074)),lines=[];
- ctx.textAlign='left';ctx.textBaseline='top';
- while(fontSize>=Math.round(w*.026)){
-  ctx.font='900 '+fontSize+'px Arial';lines=[];let line='';
-  for(const word of headline.split(/\s+/)){
-   const candidate=line?line+' '+word:word;
-   if(ctx.measureText(candidate).width>maxW&&line){lines.push(line);line=word}else line=candidate;
-  }
-  if(line)lines.push(line);
-  if(lines.length*fontSize*1.12<=maxH)break;
-  fontSize-=Math.max(1,Math.round(w*.002));
- }
- ctx.font='900 '+fontSize+'px Arial';
- const lineH=fontSize*1.12,maxLines=Math.max(1,Math.floor(maxH/lineH));
- if(lines.length>maxLines){lines=lines.slice(0,maxLines);let last=lines[maxLines-1];while(last.length&&ctx.measureText(last+'…').width>maxW)last=last.slice(0,-1);lines[maxLines-1]=last+'…'}
- lines.forEach((line,i)=>{ctx.fillStyle=i===0?white:yellow;ctx.fillText(line,w*.065,textTop+i*lineH,maxW)});
- // Fixed source footer and NOVA DAILY brand strip.
- ctx.fillStyle=red;ctx.fillRect(0,h*.94,w,h*.06);
- ctx.fillStyle=white;ctx.font='700 '+Math.round(w*.027)+'px Arial';ctx.textBaseline='middle';ctx.textAlign='left';
- ctx.fillText('◎  Source: '+source,w*.055,h*.972);
- ctx.textAlign='right';ctx.font='900 '+Math.round(w*.029)+'px Arial';ctx.fillText('NOVA DAILY',w*.95,h*.972);
- ctx.textAlign='left';ctx.textBaseline='alphabetic';
- // Red diagonal corner accents, part of the fixed template.
- ctx.fillStyle=yellow;ctx.beginPath();ctx.moveTo(0,h*.925);ctx.lineTo(w*.22,h*.925);ctx.lineTo(w*.17,h*.94);ctx.lineTo(0,h*.94);ctx.closePath();ctx.fill();
+ const breaking=($('#templateSelect')?.value||'general')==='breaking';
+ const L=layerSettings||layerDefaults;
+ const box=k=>layerBox(k,w,h);
+ const fill=(k,color)=>{const b=box(k),l=L[k];ctx.save();ctx.globalAlpha=l.opacity;ctx.fillStyle=color||l.color;ctx.fillRect(b.x,b.y,b.w,b.h);ctx.restore()};
+ const text=(k,str,x,y,baseSize,color,weight='900',align='left')=>{const b=box(k),l=L[k];ctx.save();ctx.globalAlpha=l.opacity;ctx.fillStyle=color||l.color;ctx.font=weight+' '+Math.max(12,baseSize*l.size)+'px Arial';ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillText(str,x,y,b.w);ctx.restore()};
+ ctx.clearRect(0,0,w,h);const bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,breaking?'#26070b':'#101319');bg.addColorStop(1,'#08090d');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+ // Masthead layer
+ const m=box('masthead');fill('masthead','#08090d');ctx.save();ctx.globalAlpha=L.masthead.opacity;ctx.fillStyle='#ed1c2e';ctx.beginPath();ctx.moveTo(m.x+m.w*.015,m.y+m.h*.88);ctx.lineTo(m.x+m.w*.07,m.y+m.h*.12);ctx.lineTo(m.x+m.w*.13,m.y+m.h*.12);ctx.lineTo(m.x+m.w*.075,m.y+m.h*.88);ctx.fill();ctx.restore();
+ text('masthead','NOVA',m.x+m.w*.19,m.y+m.h*.40,w*.073,'#fff');
+ text('masthead','DAILY',m.x+m.w*.19,m.y+m.h*.82,w*.046,'#fff','600');
+ // Category layer
+ const cat=box('category');fill('category',L.category.color);ctx.save();ctx.globalAlpha=L.category.opacity;ctx.fillStyle='#08090d';ctx.font='900 '+Math.round(w*.029*L.category.size)+'px Arial';ctx.textBaseline='middle';ctx.fillText(breaking?'BREAKING NEWS':(story.category||'WORLD NEWS').toUpperCase().slice(0,28),cat.x+w*.025,cat.y+cat.h*.52,cat.w-w*.05);ctx.restore();
+ // Photo frame and photo
+ const p=box('photo');ctx.save();ctx.globalAlpha=L.photo.opacity;ctx.fillStyle=L.photo.color;ctx.fillRect(p.x,p.y,p.w,p.h);if(photo){const scale=Math.max(p.w/photo.width,p.h/photo.height)*place.zoom*L.photo.size,iw=photo.width*scale,ih=photo.height*scale;ctx.beginPath();ctx.rect(p.x,p.y,p.w,p.h);ctx.clip();ctx.drawImage(photo,p.x+(p.w-iw)/2+place.x*w,p.y+(p.h-ih)/2+place.y*p.h,iw,ih)}else{ctx.fillStyle='#ffffff30';ctx.font='900 '+Math.round(w*.09*L.photo.size)+'px Arial';ctx.fillText('NEWS PHOTO',p.x+w*.07,p.y+p.h*.56)}ctx.restore();
+ // Headline panel
+ const b=box('headline');fill('headline',L.headline.color);
+ const badgeY=b.y+h*(breaking?.025:.018);
+ ctx.save();ctx.globalAlpha=L.headline.opacity;ctx.fillStyle=breaking?'#ed1c2e':'#ffd21a';ctx.fillRect(b.x+w*.04,badgeY,b.w*.78,h*.052);
+ ctx.fillStyle=breaking?'#fff':'#08090d';ctx.font='900 '+Math.round(w*.034*L.headline.size)+'px Arial';ctx.textBaseline='middle';ctx.fillText(breaking?'BREAKING NEWS':'WORLD NEWS',b.x+w*.065,badgeY+h*.026,b.w*.75);
+ const titleId=type==='facebook'?'fbImageHeadline':'pinImageHeadline',headline=($('#'+titleId)?.value||story.title||'LATEST NEWS').trim();
+ const maxW=b.w*.9,top=b.y+h*(breaking?.105:.09),bottom=b.y+b.h-h*.035,maxH=bottom-top;
+ let fs=Math.round(w*(breaking?.066:.074)*L.headline.size),lines=[];
+ while(fs>=Math.round(w*.024)){ctx.font='900 '+fs+'px Arial';lines=[];let line='';for(const word of headline.split(/\\s+/)){const candidate=line?line+' '+word:word;if(ctx.measureText(candidate).width>maxW&&line){lines.push(line);line=word}else line=candidate}if(line)lines.push(line);if(lines.length*fs*1.12<=maxH)break;fs-=Math.max(1,Math.round(w*.002))}
+ ctx.font='900 '+fs+'px Arial';const maxLines=Math.max(1,Math.floor(maxH/(fs*1.12)));if(lines.length>maxLines){lines=lines.slice(0,maxLines);let last=lines[maxLines-1];while(last.length&&ctx.measureText(last+'…').width>maxW)last=last.slice(0,-1);lines[maxLines-1]=last+'…'}
+ lines.forEach((line,i)=>{ctx.globalAlpha=L.headline.opacity;ctx.fillStyle=i===0?'#fff':'#ffd21a';ctx.fillText(line,b.x+w*.06,top+i*fs*1.12,maxW)});ctx.restore();
+ // Footer layer
+ const foot=box('footer');fill('footer',L.footer.color);ctx.save();ctx.globalAlpha=L.footer.opacity;ctx.fillStyle='#fff';ctx.font='700 '+Math.round(w*.027*L.footer.size)+'px Arial';ctx.textBaseline='middle';ctx.textAlign='left';ctx.fillText('SOURCE: '+(story.source||'NEWS DESK').toUpperCase().slice(0,25),foot.x+w*.055,foot.y+foot.h*.52,foot.w*.68);ctx.textAlign='right';ctx.font='900 '+Math.round(w*.029*L.footer.size)+'px Arial';ctx.fillText('NOVA DAILY',foot.x+foot.w*.95,foot.y+foot.h*.52,foot.w*.27);ctx.restore();
 }
 function enableImageDrag(canvas,type){
  let active=false,lastX=0,lastY=0;canvas.style.touchAction='none';canvas.style.cursor='grab';
