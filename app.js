@@ -134,45 +134,88 @@ function renderCreate(){
 function drawPosters(){if(!selectedStory)return;drawPoster($('#fbCanvas'),selectedStory,'facebook');drawPoster($('#pinCanvas'),selectedStory,'pinterest')}
 function drawPoster(c,story,type){
  const ctx=c.getContext('2d'),w=c.width,h=c.height,photo=uploadedPhoto,place=imagePlacement[type];
- const selected=$('#templateSelect')?.value||'general',template=selected;
- const styles={general:{base:'#101b31',accent:'#ffd21a',red:'#d92335'},breaking:{base:'#19090d',accent:'#fff1b8',red:'#ed1c2e'}};
- const st=styles[template]||styles.general;
- // Locked geometry: masthead 0-19%, category 19-23.5%, photo 23.5-62%, headline 63.5-92%, footer 93-100%.
- const photoTop=h*.235,photoH=h*.385,panelY=h*.635,panelH=h*.285;
- ctx.clearRect(0,0,w,h);ctx.fillStyle=st.base;ctx.fillRect(0,0,w,h);
- ctx.fillStyle=st.red;ctx.fillRect(0,0,w,h*.19);
- ctx.fillStyle='#fff';ctx.font='900 '+Math.round(w*.075)+'px Arial';ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.fillText('NOVA',w*.06,h*.085);
- ctx.fillStyle=st.accent;ctx.font='900 '+Math.round(w*.052)+'px Arial';ctx.fillText('DAILY',w*.06,h*.15);
- ctx.fillStyle='#fff';ctx.globalAlpha=.85;ctx.font='bold '+Math.round(w*.024)+'px Arial';ctx.fillText('NEWS • WORLD • DAILY',w*.49,h*.125);ctx.globalAlpha=1;
- ctx.fillStyle=st.accent;ctx.fillRect(0,h*.19,w,h*.045);
- ctx.fillStyle='#111';ctx.font='900 '+Math.round(w*.031)+'px Arial';
- const category=template==='breaking'?'BREAKING NEWS':(story.category||'LATEST NEWS').toUpperCase();ctx.fillText(category.slice(0,38),w*.06,h*.221);
- ctx.fillStyle='#172235';ctx.fillRect(0,photoTop,w,photoH);
+ const template=$('#templateSelect')?.value||(story.isBreaking?'breaking':'general');
+ const breaking=template==='breaking';
+ const red='#ed1c2e',yellow='#ffd21a',black='#08090d',white='#fff';
+ const photoTop=h*.235,photoH=h*.385,photoBottom=photoTop+photoH;
+ const titleId=type==='facebook'?'fbImageHeadline':'pinImageHeadline';
+ const headline=($('#'+titleId)?.value||story.title||'LATEST NEWS').trim();
+ const source=(story.source||'NEWS DESK').toUpperCase().slice(0,28);
+ ctx.clearRect(0,0,w,h);
+ // Fixed background and masthead: photo uploads never affect these coordinates.
+ const bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,breaking?'#26070b':'#101319');bg.addColorStop(1,black);
+ ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+ ctx.fillStyle=black;ctx.fillRect(0,0,w,h*.19);
+ // Subtle dotted world-map texture in the masthead.
+ ctx.save();ctx.globalAlpha=.20;ctx.fillStyle=breaking?red:'#9aa2ad';
+ for(let yy=h*.035;yy<h*.17;yy+=h*.014){
+  for(let xx=w*.48;xx<w*.96;xx+=w*.018){
+   const wave=Math.sin(xx/w*13)*Math.cos(yy/h*19);
+   if(wave>.08) {ctx.beginPath();ctx.arc(xx,yy,Math.max(1,w*.0022),0,Math.PI*2);ctx.fill()}
+  }
+ }
+ ctx.restore();
+ // Signature NOVA DAILY masthead and red slash mark.
+ ctx.fillStyle=red;ctx.beginPath();ctx.moveTo(w*.055,h*.145);ctx.lineTo(w*.105,h*.045);ctx.lineTo(w*.155,h*.045);ctx.lineTo(w*.105,h*.145);ctx.closePath();ctx.fill();
+ ctx.beginPath();ctx.moveTo(w*.115,h*.145);ctx.lineTo(w*.165,h*.045);ctx.lineTo(w*.215,h*.045);ctx.lineTo(w*.165,h*.145);ctx.closePath();ctx.fill();
+ ctx.fillStyle=white;ctx.textAlign='left';ctx.textBaseline='alphabetic';
+ ctx.font='900 '+Math.round(w*.073)+'px Arial';ctx.fillText('NOVA',w*.235,h*.092);
+ ctx.font='600 '+Math.round(w*.046)+'px Arial';ctx.fillText('DAILY',w*.237,h*.15);
+ // Fixed category ribbon.
+ ctx.fillStyle=red;ctx.fillRect(0,h*.19,w,h*.012);
+ ctx.fillStyle=yellow;ctx.fillRect(0,h*.202,w,h*.033);
+ ctx.fillStyle=black;ctx.font='900 '+Math.round(w*.029)+'px Arial';
+ ctx.fillText(breaking?'BREAKING NEWS':(story.category||'WORLD NEWS').toUpperCase().slice(0,26),w*.065,h*.226);
+ // Photo is the only uploaded/replaceable layer; its frame never changes.
+ ctx.fillStyle='#17202b';ctx.fillRect(0,photoTop,w,photoH);
  if(photo){
   const scale=Math.max(w/photo.width,photoH/photo.height)*place.zoom,iw=photo.width*scale,ih=photo.height*scale;
-  ctx.save();ctx.beginPath();ctx.rect(0,photoTop,w,photoH);ctx.clip();ctx.drawImage(photo,(w-iw)/2+place.x*w,photoTop+(photoH-ih)/2+place.y*photoH,iw,ih);ctx.restore();
-  const shade=ctx.createLinearGradient(0,photoTop,0,photoTop+photoH);shade.addColorStop(0,'#06102010');shade.addColorStop(1,'#06102055');ctx.fillStyle=shade;ctx.fillRect(0,photoTop,w,photoH);
+  ctx.save();ctx.beginPath();ctx.rect(0,photoTop,w,photoH);ctx.clip();
+  ctx.drawImage(photo,(w-iw)/2+place.x*w,photoTop+(photoH-ih)/2+place.y*photoH,iw,ih);ctx.restore();
+  const shade=ctx.createLinearGradient(0,photoTop,0,photoBottom);shade.addColorStop(0,'#00000008');shade.addColorStop(1,'#00000055');ctx.fillStyle=shade;ctx.fillRect(0,photoTop,w,photoH);
  }else{
-  const g=ctx.createLinearGradient(0,photoTop,w,photoTop+photoH);g.addColorStop(0,st.red);g.addColorStop(1,st.base);ctx.fillStyle=g;ctx.fillRect(0,photoTop,w,photoH);
-  ctx.fillStyle=st.accent;ctx.globalAlpha=.18;ctx.font='900 '+Math.round(w*.12)+'px Arial';ctx.fillText(template==='breaking'?'ALERT':'GENERAL',w*.06,photoTop+photoH*.58);ctx.globalAlpha=1;
+  const ph=ctx.createLinearGradient(0,photoTop,w,photoBottom);ph.addColorStop(0,breaking?'#63202a':'#31445c');ph.addColorStop(1,'#111722');ctx.fillStyle=ph;ctx.fillRect(0,photoTop,w,photoH);
+  ctx.fillStyle='#ffffff30';ctx.font='900 '+Math.round(w*.09)+'px Arial';ctx.fillText('NEWS PHOTO',w*.07,photoTop+photoH*.56);
  }
- ctx.fillStyle=template==='breaking'?st.red:'#090c12';ctx.fillRect(0,panelY,w,panelH);
- ctx.fillStyle=st.accent;ctx.fillRect(w*.06,panelY+h*.025,w*.88,h*.006);
- const id=type==='facebook'?'fbImageHeadline':'pinImageHeadline',headline=($('#'+id)?.value||story.title||'LATEST NEWS').trim();
- const maxW=w*.88,maxH=panelH-h*.075;let fontSize=Math.round(w*.067),lines=[];
+ // Lower headline panel and fixed graphic accents.
+ const panelY=photoBottom,panelH=h*.31;
+ ctx.fillStyle=breaking?'#25080d':black;ctx.fillRect(0,panelY,w,panelH);
+ if(breaking){
+  ctx.fillStyle=red;ctx.beginPath();ctx.moveTo(w*.06,panelY+h*.025);ctx.lineTo(w*.91,panelY+h*.025);ctx.lineTo(w*.86,panelY+h*.09);ctx.lineTo(w*.03,panelY+h*.09);ctx.closePath();ctx.fill();
+  ctx.fillStyle=white;ctx.font='italic 900 '+Math.round(w*.064)+'px Arial';ctx.fillText('BREAKING',w*.105,panelY+h*.078);
+  ctx.fillStyle=yellow;ctx.beginPath();ctx.moveTo(w*.25,panelY+h*.095);ctx.lineTo(w*.86,panelY+h*.095);ctx.lineTo(w*.82,panelY+h*.155);ctx.lineTo(w*.21,panelY+h*.155);ctx.closePath();ctx.fill();
+  ctx.fillStyle=black;ctx.font='italic 900 '+Math.round(w*.057)+'px Arial';ctx.fillText('NEWS',w*.36,panelY+h*.143);
+ }else{
+  ctx.fillStyle=yellow;ctx.beginPath();ctx.moveTo(0,panelY+h*.018);ctx.lineTo(w*.61,panelY+h*.018);ctx.lineTo(w*.66,panelY+h*.075);ctx.lineTo(0,panelY+h*.075);ctx.closePath();ctx.fill();
+  ctx.fillStyle=black;ctx.font='900 '+Math.round(w*.035)+'px Arial';ctx.fillText('◉  WORLD NEWS',w*.065,panelY+h*.06);
+ }
+ const textTop=breaking?panelY+h*.18:panelY+h*.105;
+ const textBottom=h*.925;
+ const maxW=w*.87,maxH=textBottom-textTop;
+ let fontSize=Math.round(w*(breaking?.066:.074)),lines=[];
  ctx.textAlign='left';ctx.textBaseline='top';
- while(fontSize>=Math.round(w*.025)){
+ while(fontSize>=Math.round(w*.026)){
   ctx.font='900 '+fontSize+'px Arial';lines=[];let line='';
-  for(const word of headline.split(/\s+/)){const candidate=line?line+' '+word:word;if(ctx.measureText(candidate).width>maxW&&line){lines.push(line);line=word}else line=candidate}
-  if(line)lines.push(line);if(lines.length*fontSize*1.12<=maxH)break;fontSize-=Math.max(1,Math.round(w*.002));
+  for(const word of headline.split(/\s+/)){
+   const candidate=line?line+' '+word:word;
+   if(ctx.measureText(candidate).width>maxW&&line){lines.push(line);line=word}else line=candidate;
+  }
+  if(line)lines.push(line);
+  if(lines.length*fontSize*1.12<=maxH)break;
+  fontSize-=Math.max(1,Math.round(w*.002));
  }
- ctx.font='900 '+fontSize+'px Arial';ctx.fillStyle='#fff';
+ ctx.font='900 '+fontSize+'px Arial';
  const lineH=fontSize*1.12,maxLines=Math.max(1,Math.floor(maxH/lineH));
  if(lines.length>maxLines){lines=lines.slice(0,maxLines);let last=lines[maxLines-1];while(last.length&&ctx.measureText(last+'…').width>maxW)last=last.slice(0,-1);lines[maxLines-1]=last+'…'}
- lines.forEach((line,i)=>ctx.fillText(line,w*.06,panelY+h*.065+i*lineH,maxW));
- ctx.fillStyle=st.red;ctx.fillRect(0,h*.93,w,h*.07);
- ctx.fillStyle='#fff';ctx.font='900 '+Math.round(w*.033)+'px Arial';ctx.textBaseline='middle';ctx.textAlign='left';ctx.fillText((story.source||'NEWS DESK').toUpperCase().slice(0,22),w*.06,h*.965);
- ctx.textAlign='right';ctx.fillText('NOVA DAILY',w*.94,h*.965);ctx.textAlign='left';
+ lines.forEach((line,i)=>{ctx.fillStyle=i===0?white:yellow;ctx.fillText(line,w*.065,textTop+i*lineH,maxW)});
+ // Fixed source footer and NOVA DAILY brand strip.
+ ctx.fillStyle=red;ctx.fillRect(0,h*.94,w,h*.06);
+ ctx.fillStyle=white;ctx.font='700 '+Math.round(w*.027)+'px Arial';ctx.textBaseline='middle';ctx.textAlign='left';
+ ctx.fillText('◎  Source: '+source,w*.055,h*.972);
+ ctx.textAlign='right';ctx.font='900 '+Math.round(w*.029)+'px Arial';ctx.fillText('NOVA DAILY',w*.95,h*.972);
+ ctx.textAlign='left';ctx.textBaseline='alphabetic';
+ // Red diagonal corner accents, part of the fixed template.
+ ctx.fillStyle=yellow;ctx.beginPath();ctx.moveTo(0,h*.925);ctx.lineTo(w*.22,h*.925);ctx.lineTo(w*.17,h*.94);ctx.lineTo(0,h*.94);ctx.closePath();ctx.fill();
 }
 function enableImageDrag(canvas,type){
  let active=false,lastX=0,lastY=0;canvas.style.touchAction='none';canvas.style.cursor='grab';
