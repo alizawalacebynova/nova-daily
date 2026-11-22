@@ -8,7 +8,7 @@ from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 FEEDS = [
-    ("Associated Press (AP)", "https://flipboard.com/@associatedpress/top-stories-u7govdf1z.rss"),
+    ("Associated Press (AP)", "https://news.google.com/rss/search?q=when%3A24h+site%3Aapnews.com&hl=en-US&gl=US&ceid=US%3Aen"),
     ("Reuters", "https://news.google.com/rss/search?q=when%3A24h+site%3Areuters.com&hl=en-US&gl=US&ceid=US%3Aen"),
     ("CNN", "https://news.google.com/rss/search?q=when%3A24h+site%3Acnn.com&hl=en-US&gl=US&ceid=US%3Aen"),
 ]
