@@ -1,6 +1,11 @@
 name: Update NOVA DAILY news
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/collect_news.py"
+      - ".github/workflows/update-news.yml"
   schedule:
     - cron: "0 */3 * * *"
   workflow_dispatch:
