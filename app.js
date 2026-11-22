@@ -64,12 +64,12 @@ function makeImagePrompt(story){
  return 'Create a photorealistic editorial news photograph for NOVA DAILY. STORY: '+story.title+'. CATEGORY: '+story.category+'. CONTEXT: '+story.summary+'. Show a realistic scene that directly illustrates this specific story, in credible documentary photojournalism style, natural lighting, professional camera quality, strong clear subject, premium American news-media look. Portrait 4:5 composition, with clean negative space in the lower third for an accurate headline overlay. Dramatic but believable, not sensationalized. Do not invent identifiable people, logos, official seals, readable signs, words, captions, watermarks, dates, statistics or extra facts. No text in image. Create only the background photograph; NOVA DAILY will add the headline and branding separately. Pinterest version will be adapted to 2:3.';
 }
 function templateForStory(story){
- const cat=(story.category||'').toLowerCase();
+ const cat=(story.category||'').toLowerCase(),title=(story.title||'').toLowerCase();
+ if(/breaking|urgent|developing/.test(cat+' '+title))return 'breaking';
  if(/sport|football|basketball|baseball/.test(cat))return 'sports';
  if(/technology|tech|science|ai/.test(cat))return 'technology';
  if(/business|economy|market|finance/.test(cat))return 'economy';
- if(/world|politic|international/.test(cat))return 'world';
- return 'breaking';
+ return 'world';
 }
 function renderCreate(){
  if(!selectedStory){root.innerHTML='<div class="empty-state">Choose a story from News Feed first.<br><br><button class="button button-primary" data-goto="news">Browse news</button></div>';return}
