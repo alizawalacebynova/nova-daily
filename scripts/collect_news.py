@@ -2,6 +2,8 @@ import hashlib
 import json
 import re
 import urllib.request
+import urllib.parse
+import time
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
@@ -35,6 +37,67 @@ def image_url(item):
     if match and match.group(1).startswith(("https://", "http://")):
         return match.group(1)
     return None
+
+def commons_image(headline):
+    """Find a reusable, openly licensed image on Wikimedia Commons."""
+    stop = {"with", "from", "after", "over", "into", "about", "says", "said",
+            "new", "latest", "live", "what", "this", "that", "their", "will",
+            "have", "been", "are", "for", "the", "and", "but", "who", "how"}
+    words = re.findall(r"[A-Za-z0-9]{3,}", headline.lower())
+    query_words = []
+    for word in words:
+        if word not in stop and word not in query_words:
+            query_words.append(word)
+    if not query_words:
+        return None
+    params = {
+        "action": "query", "generator": "search",
+        "gsrsearch": " ".join(query_words[:5]), "gsrnamespace": "6",
+        "gsrlimit": "8", "prop": "imageinfo",
+        "iiprop": "url|extmetadata", "iiurlwidth": "640",
+        "iiextmetadatafilter": "LicenseShortName|Artist|Credit",
+        "format": "json", "origin": "*",
+    }
+    request_url = "https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode(params)
+    request = urllib.request.Request(request_url, headers={
+        "User-Agent": "NOVA-DAILY/1.0 (personal news dashboard)"
+    })
+    try:
+        with urllib.request.urlopen(request, timeout=20) as response:
+            data = json.loads(response.read().decode("utf-8"))
+        candidates = []
+        for page in data.get("query", {}).get("pages", {}).values():
+            info_list = page.get("imageinfo", [])
+            if not info_list:
+                continue
+            info = info_list[0]
+            metadata = info.get("extmetadata", {})
+            license_name = clean(metadata.get("LicenseShortName", {}).get("value", ""))
+            lower = license_name.lower()
+            if not license_name or not (
+                "creative commons" in lower or lower.startswith("cc") or "public domain" in lower
+            ):
+                continue
+            thumb = info.get("thumburl") or info.get("url")
+            if not thumb:
+                continue
+            searchable = page.get("title", "").lower()
+            score = sum(1 for word in query_words if word in searchable)
+            candidates.append((score, {
+                "image_url": thumb,
+                "image_page_url": info.get("descriptionurl", ""),
+                "image_license": license_name,
+                "image_credit": clean(metadata.get("Artist", {}).get("value", "")) or
+                                clean(metadata.get("Credit", {}).get("value", "")) or
+                                "Wikimedia Commons contributor",
+            }))
+        if not candidates:
+            return None
+        candidates.sort(key=lambda item: item[0], reverse=True)
+        return candidates[0][1] if candidates[0][0] >= 1 else None
+    except Exception as exc:
+        print(f"Commons image search skipped: {exc}")
+        return None
 
 def category(title, summary):
     t = (title + " " + summary).lower()
@@ -89,7 +152,7 @@ for source_name, feed_url in FEEDS:
                 "id": "rss-" + key,
                 "title": title,
                 "summary": summary[:500],
-                "image_url": image_url(item),
+                "image_url": None,
                 "url": link,
                 "source": source_name,
                 "category": category(title, summary),
@@ -104,6 +167,14 @@ ordered = sorted(
     key=lambda item: item.get("published_at") or "",
     reverse=True
 )[:150]
+
+# Find Commons thumbnails for the 35 newest stories. Requests are sequential
+# and rate-limited; stories without a suitable openly licensed image stay text-only.
+for story in ordered[:35]:
+    image = commons_image(story["title"])
+    if image:
+        story.update(image)
+    time.sleep(0.35)
 
 Path("news.json").write_text(
     json.dumps(ordered, ensure_ascii=False, indent=2),
