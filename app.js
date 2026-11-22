@@ -102,59 +102,49 @@ function drawPosters(){if(!selectedStory)return;drawPoster($('#fbCanvas'),select
 function drawPoster(c,story,type){
  const ctx=c.getContext('2d'),w=c.width,h=c.height,photo=uploadedPhoto,place=imagePlacement[type];
  const selected=$('#templateSelect')?.value||'auto',template=selected==='auto'?templateForStory(story):selected;
- const styles={
-  sports:{base:'#101522',accent:'#ffd21a',red:'#e31d2b',kicker:'SPORTS DESK',photo:.59},
-  breaking:{base:'#080d18',accent:'#ffd21a',red:'#e31d2b',kicker:'BREAKING NEWS',photo:.55},
-  technology:{base:'#071a2b',accent:'#40d9ff',red:'#e31d2b',kicker:'TECHNOLOGY',photo:.58},
-  world:{base:'#101b31',accent:'#ffd21a',red:'#e31d2b',kicker:'WORLD REPORT',photo:.58},
-  economy:{base:'#17170f',accent:'#ffd21a',red:'#e31d2b',kicker:'ECONOMY UPDATE',photo:.58}
- },st=styles[template]||styles.breaking;
+ const styles={sports:{base:'#101522',accent:'#ffd21a',red:'#e31d2b'},breaking:{base:'#080d18',accent:'#ffd21a',red:'#e31d2b'},technology:{base:'#071a2b',accent:'#40d9ff',red:'#e31d2b'},world:{base:'#101b31',accent:'#ffd21a',red:'#e31d2b'},economy:{base:'#17170f',accent:'#ffd21a',red:'#e31d2b'}};
+ const st=styles[template]||styles.world;
+ // Locked geometry: masthead 0-19%, category 19-23.5%, photo 23.5-62%, headline 63.5-92%, footer 93-100%.
+ const photoTop=h*.235,photoH=h*.385,panelY=h*.635,panelH=h*.285;
  ctx.clearRect(0,0,w,h);ctx.fillStyle=st.base;ctx.fillRect(0,0,w,h);
- const photoH=h*st.photo;
+ ctx.fillStyle=st.red;ctx.fillRect(0,0,w,h*.19);
+ ctx.fillStyle='#fff';ctx.font='900 '+Math.round(w*.075)+'px Arial';ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.fillText('NOVA',w*.06,h*.085);
+ ctx.fillStyle=st.accent;ctx.font='900 '+Math.round(w*.052)+'px Arial';ctx.fillText('DAILY',w*.06,h*.15);
+ ctx.fillStyle='#fff';ctx.globalAlpha=.85;ctx.font='bold '+Math.round(w*.024)+'px Arial';ctx.fillText('NEWS • WORLD • DAILY',w*.49,h*.125);ctx.globalAlpha=1;
+ ctx.fillStyle=st.accent;ctx.fillRect(0,h*.19,w,h*.045);
+ ctx.fillStyle='#111';ctx.font='900 '+Math.round(w*.031)+'px Arial';
+ const category=template==='breaking'?'BREAKING NEWS':(story.category||'LATEST NEWS').toUpperCase();ctx.fillText(category.slice(0,38),w*.06,h*.221);
+ ctx.fillStyle='#172235';ctx.fillRect(0,photoTop,w,photoH);
  if(photo){
   const scale=Math.max(w/photo.width,photoH/photo.height)*place.zoom,iw=photo.width*scale,ih=photo.height*scale;
-  ctx.save();ctx.beginPath();ctx.rect(0,0,w,photoH);ctx.clip();ctx.drawImage(photo,(w-iw)/2+place.x*w,(photoH-ih)/2+place.y*photoH,iw,ih);ctx.restore();
-  const shade=ctx.createLinearGradient(0,0,0,photoH);shade.addColorStop(0,'#06102033');shade.addColorStop(.72,'#06102055');shade.addColorStop(1,st.base);ctx.fillStyle=shade;ctx.fillRect(0,0,w,photoH);
+  ctx.save();ctx.beginPath();ctx.rect(0,photoTop,w,photoH);ctx.clip();ctx.drawImage(photo,(w-iw)/2+place.x*w,photoTop+(photoH-ih)/2+place.y*photoH,iw,ih);ctx.restore();
+  const shade=ctx.createLinearGradient(0,photoTop,0,photoTop+photoH);shade.addColorStop(0,'#06102010');shade.addColorStop(1,'#06102055');ctx.fillStyle=shade;ctx.fillRect(0,photoTop,w,photoH);
  }else{
-  const g=ctx.createLinearGradient(0,0,w,photoH);g.addColorStop(0,st.red);g.addColorStop(1,st.base);ctx.fillStyle=g;ctx.fillRect(0,0,w,photoH);
-  ctx.globalAlpha=.18;for(let i=0;i<8;i++){ctx.beginPath();ctx.arc(w*(.12+i*.13),photoH*.45,w*.17,0,Math.PI*2);ctx.strokeStyle=st.accent;ctx.lineWidth=w*.008;ctx.stroke()}ctx.globalAlpha=1;
+  const g=ctx.createLinearGradient(0,photoTop,w,photoTop+photoH);g.addColorStop(0,st.red);g.addColorStop(1,st.base);ctx.fillStyle=g;ctx.fillRect(0,photoTop,w,photoH);
+  ctx.fillStyle=st.accent;ctx.globalAlpha=.18;ctx.font='900 '+Math.round(w*.12)+'px Arial';ctx.fillText(template==='sports'?'SPORTS':template==='technology'?'TECH':template==='economy'?'MARKETS':template==='breaking'?'ALERT':'WORLD',w*.06,photoTop+photoH*.58);ctx.globalAlpha=1;
  }
- // Consistent NOVA DAILY masthead
- ctx.fillStyle=st.red;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(w*.43,0);ctx.lineTo(w*.34,h*.145);ctx.lineTo(0,h*.145);ctx.closePath();ctx.fill();
- ctx.fillStyle='#fff';ctx.font='900 '+Math.round(w*.072)+'px Arial';ctx.fillText('NOVA',w*.045,h*.075);
- ctx.fillStyle='#ffd21a';ctx.font='900 '+Math.round(w*.052)+'px Arial';ctx.fillText('DAILY',w*.045,h*.128);
- // Category strip
- ctx.fillStyle=st.accent;ctx.fillRect(w*.055,h*.165,w*.89,h*.052);
- ctx.fillStyle='#111';ctx.font='900 '+Math.round(w*.033)+'px Arial';ctx.fillText((template==='breaking'?'BREAKING NEWS':story.category||st.kicker).toUpperCase().slice(0,34),w*.08,h*.201);
- // Dedicated headline panel, never drawn over the photograph
- const panelY=h*.66,panelH=h*.25;
  ctx.fillStyle=template==='breaking'?st.red:'#090c12';ctx.fillRect(0,panelY,w,panelH);
- if(template!=='breaking'){ctx.fillStyle=st.red;ctx.fillRect(0,panelY,w,h*.012)}
- ctx.fillStyle=st.accent;ctx.fillRect(w*.055,panelY+h*.035,w*.89,h*.006);
- const id=type==='facebook'?'fbImageHeadline':'pinImageHeadline',headline=$('#'+id)?.value||story.title;
- const maxW=w*.86,maxH=panelH-h*.085;
- let fontSize=Math.round(w*.071),lines=[];
+ ctx.fillStyle=st.accent;ctx.fillRect(w*.06,panelY+h*.025,w*.88,h*.006);
+ const id=type==='facebook'?'fbImageHeadline':'pinImageHeadline',headline=($('#'+id)?.value||story.title||'LATEST NEWS').trim();
+ const maxW=w*.88,maxH=panelH-h*.075;let fontSize=Math.round(w*.067),lines=[];
  ctx.textAlign='left';ctx.textBaseline='top';
- while(fontSize>w*.034){
+ while(fontSize>=Math.round(w*.025)){
   ctx.font='900 '+fontSize+'px Arial';lines=[];let line='';
-  for(const word of String(headline).split(/\s+/)){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxW&&line){lines.push(line);line=word}else line=test}
-  if(line)lines.push(line);
-  if(lines.length*fontSize*1.12<=maxH)break;
-  fontSize-=Math.round(w*.003);
+  for(const word of headline.split(/\s+/)){const candidate=line?line+' '+word:word;if(ctx.measureText(candidate).width>maxW&&line){lines.push(line);line=word}else line=candidate}
+  if(line)lines.push(line);if(lines.length*fontSize*1.12<=maxH)break;fontSize-=Math.max(1,Math.round(w*.002));
  }
  ctx.font='900 '+fontSize+'px Arial';ctx.fillStyle='#fff';
- const lineH=fontSize*1.12;lines.slice(0,Math.max(1,Math.floor(maxH/lineH))).forEach((line,i)=>ctx.fillText(line,w*.07,panelY+h*.065+i*lineH,maxW));
- // Footer source and brand lockup
- ctx.fillStyle=st.red;ctx.fillRect(0,h*.925,w,h*.075);
- ctx.fillStyle='#fff';ctx.font='900 '+Math.round(w*.036)+'px Arial';
- const source=(story.source||'NEWS DESK').toUpperCase().slice(0,24);ctx.fillText(source,w*.06,h*.963);
- ctx.textAlign='right';ctx.font='900 '+Math.round(w*.034)+'px Arial';ctx.fillText('NOVA DAILY',w*.94,h*.963);ctx.textAlign='left';
- ctx.fillStyle=st.accent;ctx.fillRect(w*.06,h*.982,w*.88,h*.004);
+ const lineH=fontSize*1.12,maxLines=Math.max(1,Math.floor(maxH/lineH));
+ if(lines.length>maxLines){lines=lines.slice(0,maxLines);let last=lines[maxLines-1];while(last.length&&ctx.measureText(last+'…').width>maxW)last=last.slice(0,-1);lines[maxLines-1]=last+'…'}
+ lines.forEach((line,i)=>ctx.fillText(line,w*.06,panelY+h*.065+i*lineH,maxW));
+ ctx.fillStyle=st.red;ctx.fillRect(0,h*.93,w,h*.07);
+ ctx.fillStyle='#fff';ctx.font='900 '+Math.round(w*.033)+'px Arial';ctx.textBaseline='middle';ctx.textAlign='left';ctx.fillText((story.source||'NEWS DESK').toUpperCase().slice(0,22),w*.06,h*.965);
+ ctx.textAlign='right';ctx.fillText('NOVA DAILY',w*.94,h*.965);ctx.textAlign='left';
 }
 function enableImageDrag(canvas,type){
  let active=false,lastX=0,lastY=0;canvas.style.touchAction='none';canvas.style.cursor='grab';
  canvas.addEventListener('pointerdown',e=>{if(!uploadedPhoto)return;active=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId);canvas.style.cursor='grabbing'});
- canvas.addEventListener('pointermove',e=>{if(!active||!uploadedPhoto)return;const rect=canvas.getBoundingClientRect(),p=imagePlacement[type];p.x+=(e.clientX-lastX)/rect.width;p.y+=(e.clientY-lastY)/rect.height/(type==='facebook'?.59:.58);const w=canvas.width,h=canvas.height,photoH=h*.66,scale=Math.max(w/uploadedPhoto.width,photoH/uploadedPhoto.height)*p.zoom,iw=uploadedPhoto.width*scale,ih=uploadedPhoto.height*scale;p.x=Math.max(-Math.max(0,(iw-w)/(2*w)),Math.min(Math.max(0,(iw-w)/(2*w)),p.x));p.y=Math.max(-Math.max(0,(ih-photoH)/(2*photoH)),Math.min(Math.max(0,(ih-photoH)/(2*photoH)),p.y));lastX=e.clientX;lastY=e.clientY;drawPosters()});
+ canvas.addEventListener('pointermove',e=>{if(!active||!uploadedPhoto)return;const rect=canvas.getBoundingClientRect(),p=imagePlacement[type];p.x+=(e.clientX-lastX)/rect.width;p.y+=(e.clientY-lastY)/rect.height/.385;const w=canvas.width,h=canvas.height,photoH=h*.385,scale=Math.max(w/uploadedPhoto.width,photoH/uploadedPhoto.height)*p.zoom,iw=uploadedPhoto.width*scale,ih=uploadedPhoto.height*scale;p.x=Math.max(-Math.max(0,(iw-w)/(2*w)),Math.min(Math.max(0,(iw-w)/(2*w)),p.x));p.y=Math.max(-Math.max(0,(ih-photoH)/(2*photoH)),Math.min(Math.max(0,(ih-photoH)/(2*photoH)),p.y));lastX=e.clientX;lastY=e.clientY;drawPosters()});
  const stop=()=>{active=false;canvas.style.cursor='grab'};canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);
  canvas.addEventListener('wheel',e=>{if(!uploadedPhoto)return;e.preventDefault();const p=imagePlacement[type];p.zoom=Math.max(1,Math.min(3,p.zoom+(e.deltaY<0?.05:-.05)));drawPosters()},{passive:false});
 }
