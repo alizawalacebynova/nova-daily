@@ -101,7 +101,7 @@ function drawPoster(c,story,type){
 function enableImageDrag(canvas,type){
  let active=false,lastX=0,lastY=0;canvas.style.touchAction='none';canvas.style.cursor='grab';
  canvas.addEventListener('pointerdown',e=>{if(!uploadedPhoto)return;active=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId);canvas.style.cursor='grabbing'});
- canvas.addEventListener('pointermove',e=>{if(!active||!uploadedPhoto)return;const rect=canvas.getBoundingClientRect(),p=imagePlacement[type];p.x+=(e.clientX-lastX)/rect.width;p.y+=(e.clientY-lastY)/rect.height/.66;lastX=e.clientX;lastY=e.clientY;drawPosters()});
+ canvas.addEventListener('pointermove',e=>{if(!active||!uploadedPhoto)return;const rect=canvas.getBoundingClientRect(),p=imagePlacement[type];p.x+=(e.clientX-lastX)/rect.width;p.y+=(e.clientY-lastY)/rect.height/.66;const w=canvas.width,h=canvas.height,photoH=h*.66,scale=Math.max(w/uploadedPhoto.width,photoH/uploadedPhoto.height)*p.zoom,iw=uploadedPhoto.width*scale,ih=uploadedPhoto.height*scale;p.x=Math.max(-Math.max(0,(iw-w)/(2*w)),Math.min(Math.max(0,(iw-w)/(2*w)),p.x));p.y=Math.max(-Math.max(0,(ih-photoH)/(2*photoH)),Math.min(Math.max(0,(ih-photoH)/(2*photoH)),p.y));lastX=e.clientX;lastY=e.clientY;drawPosters()});
  const stop=()=>{active=false;canvas.style.cursor='grab'};canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);
  canvas.addEventListener('wheel',e=>{if(!uploadedPhoto)return;e.preventDefault();const p=imagePlacement[type];p.zoom=Math.max(1,Math.min(3,p.zoom+(e.deltaY<0?.05:-.05)));drawPosters()},{passive:false});
 }
