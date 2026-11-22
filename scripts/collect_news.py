@@ -62,6 +62,13 @@ for source_name, feed_url in FEEDS:
             summary = text(item, "description")
             if not title or not link.startswith("http"):
                 continue
+            # Ignore feed noise and non-story pages.
+            noise = (title + " " + summary).lower()
+            if any(term in noise for term in (
+                "sitemap", "video playlist", "photo gallery index",
+                "rss feed", "podcast feed", "newsletter sign up"
+            )):
+                continue
             key = hashlib.sha256(link.encode("utf-8")).hexdigest()[:16]
             published = parse_date(text(item, "pubDate"))
             stories[key] = {
