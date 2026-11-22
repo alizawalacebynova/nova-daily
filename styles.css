@@ -19,3 +19,6 @@
 /* Thumbnail workshop and editable poster controls */
 .image-workshop{margin-top:16px}.image-actions{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}.upload-button{display:inline-flex;align-items:center;justify-content:center}.image-workshop .field textarea{min-height:120px;color:#cbd6e5}.poster-card .field{margin:4px 0 10px}.poster-card canvas{display:block;max-width:100%;height:auto}.poster-card .button{width:100%}
 @media(max-width:760px){.image-actions .button{flex:1}.poster-grid{grid-template-columns:1fr}}
+
+/* Clear interaction cues for thumbnail crop editor */
+.editor-hint{font-size:10px;line-height:1.5;color:#aab6c8;background:#171e2a;border:1px solid #303b4d;border-radius:8px;padding:9px 11px;margin:0 0 10px}.poster-card canvas{cursor:grab;touch-action:none}.poster-card canvas:active{cursor:grabbing}
