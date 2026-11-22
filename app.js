@@ -20,7 +20,7 @@ function detectCountry(textValue=''){
  for(const [name,re] of rules)if(re.test(t))return name;
  return 'International';
 }
-\nconst categories=['All','Politics','Technology','Business','Science','Crime','Lifestyle','Sports','Celebrity','Movies','TV Series','Music'];
+const categories=['All','Politics','Technology','Business','Science','Crime','Lifestyle','Sports','Celebrity','Movies','TV Series','Music'];
 let stories=[],activeView='news',selectedStory=null,fbText='',pinTitle='',pinDescription='',pinTags='',uploadedPhoto=null,uploadedPhotoUrl='',imagePlacement={facebook:{x:0,y:0,zoom:1},pinterest:{x:0,y:0,zoom:1}};
 const $=s=>document.querySelector(s),root=$('#viewRoot');
 function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
