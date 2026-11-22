@@ -22,3 +22,15 @@
 
 /* Clear interaction cues for thumbnail crop editor */
 .editor-hint{font-size:10px;line-height:1.5;color:#aab6c8;background:#171e2a;border:1px solid #303b4d;border-radius:8px;padding:9px 11px;margin:0 0 10px}.poster-card canvas{cursor:grab;touch-action:none}.poster-card canvas:active{cursor:grabbing}
+
+
+/* Integrated NOVA DAILY thumbnail editor and five template layouts */
+.embedded-thumbnail{border-top:1px solid var(--line);margin-top:20px;padding-top:17px;display:grid;gap:11px}
+.embedded-thumbnail canvas{display:block;width:min(100%,420px);height:auto;justify-self:center;border:1px solid #384253;border-radius:10px;background:#080d18;cursor:grab;touch-action:none}
+.embedded-thumbnail canvas:active{cursor:grabbing}
+.embedded-thumbnail .button{width:100%}
+.template-controls{margin-top:16px}
+.template-controls .field select{width:100%;background:#0c1119;border:1px solid #2b3443;color:#e8edf5;border-radius:8px;padding:11px;font-size:11px}
+.template-controls .image-actions{margin:12px 0}
+.template-controls .editor-hint{margin-top:8px}
+@media(max-width:760px){.embedded-thumbnail canvas{width:100%}.template-controls .image-actions .button{flex:1}}
