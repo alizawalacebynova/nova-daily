@@ -10,14 +10,24 @@ from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 COUNTRIES = [
-    ("United States", "US", "en-US"), ("United Kingdom", "GB", "en-GB"),
-    ("Canada", "CA", "en-CA"), ("Australia", "AU", "en-AU"),
-    ("India", "IN", "en-IN"), ("Sri Lanka", "LK", "en-LK"),
-    ("Japan", "JP", "en-US"), ("Germany", "DE", "en-US"),
-    ("France", "FR", "en-US"), ("Brazil", "BR", "en-US"),
-    ("Mexico", "MX", "en-US"), ("United Arab Emirates", "AE", "en-US"),
-    ("South Africa", "ZA", "en-US"), ("New Zealand", "NZ", "en-US"),
+    ("United States", "US", "en-US"), ("France", "FR", "en-US"),
+    ("Mexico", "MX", "en-US"), ("United Kingdom", "GB", "en-GB"),
+    ("Australia", "AU", "en-AU"), ("Canada", "CA", "en-CA"),
+    ("Brazil", "BR", "en-US"), ("New Zealand", "NZ", "en-US"),
 ]
+
+# A story must mention the selected country or a well-known local demonym/place.
+# Edition metadata alone is never treated as proof of story relevance.
+COUNTRY_KEYWORDS = {
+    "United States": ("United States", "USA", "U.S.", "American", "Americans", "Washington", "New York", "Los Angeles", "California", "Texas", "Florida", "Chicago", "Boston", "Seattle", "Miami", "Alaska", "Hawaii"),
+    "France": ("France", "French", "Paris", "Marseille", "Lyon", "Nice", "Bordeaux", "Toulouse", "French Riviera"),
+    "Mexico": ("Mexico", "Mexican", "Mexico City", "Guadalajara", "Monterrey", "Cancun", "Tijuana", "Puebla", "Oaxaca"),
+    "United Kingdom": ("United Kingdom", "Britain", "British", "England", "English", "Scotland", "Scottish", "Wales", "Welsh", "Northern Ireland", "London", "Manchester", "Liverpool", "Birmingham", "Edinburgh", "Glasgow", "Cardiff"),
+    "Australia": ("Australia", "Australian", "Sydney", "Melbourne", "Brisbane", "Perth", "Canberra", "Adelaide", "Tasmania"),
+    "Canada": ("Canada", "Canadian", "Toronto", "Ottawa", "Vancouver", "Montreal", "Québec", "Quebec", "Calgary", "Edmonton", "Winnipeg"),
+    "Brazil": ("Brazil", "Brazilian", "Brasília", "Sao Paulo", "São Paulo", "Rio de Janeiro", "Amazonas", "Rio Grande do Sul"),
+    "New Zealand": ("New Zealand", "New Zealander", "Kiwi", "Auckland", "Wellington", "Christchurch", "Hamilton", "Dunedin"),
+}
 PUBLISHERS = "(site:apnews.com OR site:reuters.com OR site:cnn.com)"
 
 def clean(value):
@@ -66,6 +76,21 @@ def publisher(title):
         return "CNN"
     return "Google News"
 
+def is_relevant_to_country(country_name, title, summary):
+    text = title + " " + summary
+    for keyword in COUNTRY_KEYWORDS[country_name]:
+        if re.search(r"(?<!\\w)" + re.escape(keyword) + r"(?!\\w)", text, flags=re.IGNORECASE):
+            return True
+    return False
+
+def is_generic_section_page(title):
+    # Exclude navigation/edition pages such as "England - AP News".
+    return bool(re.fullmatch(
+        r"[^|:–—-]{2,55}\\s*[-|:–—]\\s*(?:AP News|Reuters|CNN)",
+        title.strip(),
+        flags=re.IGNORECASE,
+    ))
+
 stories = {}
 for country_name, country_code, language in COUNTRIES:
     region = language.split("-")[-1]
@@ -85,6 +110,10 @@ for country_name, country_code, language in COUNTRIES:
             link = node_text(item, "link")
             summary = node_text(item, "description")
             if not title or not link.startswith("http"):
+                continue
+            if is_generic_section_page(title):
+                continue
+            if not is_relevant_to_country(country_name, title, summary):
                 continue
             noise = (title + " " + summary).lower()
             if any(term in noise for term in ("sitemap", "rss feed", "podcast feed", "newsletter sign up")):
