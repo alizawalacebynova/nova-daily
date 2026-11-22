@@ -76,11 +76,12 @@ def publisher(title):
 stories = {}
 for country_name, country_code, language in COUNTRIES:
     query = f'when:7d "{country_name}" {PUBLISHERS}'
+    region = language.split("-")[-1]
     params = urllib.parse.urlencode({
         "q": query,
         "hl": language,
         "gl": country_code,
-        "ceid": f"{country_code}:{language.split("-")[-1]}",
+        "ceid": f"{country_code}:{region}",
     })
     feed_url = "https://news.google.com/rss/search?" + params
     request = urllib.request.Request(feed_url, headers={"User-Agent": "NOVA-DAILY/1.0"})
