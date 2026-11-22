@@ -15,3 +15,7 @@
 .platform-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.platform-head h3{margin:0}.platform-size{font-size:9px;color:#f1c44c;background:#2b281d;border-radius:20px;padding:5px 8px}
 .poster-heading{margin-top:22px}.poster-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.poster-card{display:grid;gap:12px;align-content:start}.poster-card canvas{width:min(100%,360px);height:auto;border:1px solid #303949;border-radius:9px;background:#111722;justify-self:center}.poster-card button{justify-self:start}.feed-note{font-size:10px;color:#8490a2;line-height:1.7;margin-top:14px}.card-footer{gap:8px}.card-thumbnail{object-fit:cover}.news-card .card-art{min-height:160px}
 @media(max-width:760px){.selected-story{display:block}.selected-story>a{display:inline-block;margin-top:12px}.poster-grid{grid-template-columns:1fr}.platform-head{align-items:flex-start;flex-direction:column}}
+
+/* Thumbnail workshop and editable poster controls */
+.image-workshop{margin-top:16px}.image-actions{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}.upload-button{display:inline-flex;align-items:center;justify-content:center}.image-workshop .field textarea{min-height:120px;color:#cbd6e5}.poster-card .field{margin:4px 0 10px}.poster-card canvas{display:block;max-width:100%;height:auto}.poster-card .button{width:100%}
+@media(max-width:760px){.image-actions .button{flex:1}.poster-grid{grid-template-columns:1fr}}
