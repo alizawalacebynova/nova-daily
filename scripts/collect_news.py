@@ -177,13 +177,16 @@ for source_name, feed_url, country_name in FEEDS:
                 continue
             key = hashlib.sha256(link.encode("utf-8")).hexdigest()[:16]
             published = parse_date(text(item, "pubDate"))
+            title_lower = title.lower()
+            publisher = "Associated Press (AP)" if "ap news" in title_lower else "Reuters" if "reuters" in title_lower else "CNN" if "cnn" in title_lower else "Google News"
             stories[key] = {
                 "id": "rss-" + key,
                 "title": title,
                 "summary": summary[:500],
                 "image_url": None,
                 "url": link,
-                "source": source_name,
+                "source": publisher,
+                "country": country_name,
                 "category": category(title, summary),
                 "published_at": published,
             }
