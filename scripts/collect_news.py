@@ -1,35 +1,28 @@
 import hashlib
+import html
 import json
 import re
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
-from datetime import datetime, timezone
+from datetime import timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 COUNTRIES = [
-    ("United States", "US", "en-US"),
-    ("United Kingdom", "GB", "en-GB"),
-    ("Canada", "CA", "en-CA"),
-    ("Australia", "AU", "en-AU"),
-    ("India", "IN", "en-IN"),
-    ("Sri Lanka", "LK", "en-LK"),
-    ("Japan", "JP", "en-US"),
-    ("Germany", "DE", "en-US"),
-    ("France", "FR", "en-US"),
-    ("Brazil", "BR", "en-US"),
-    ("Mexico", "MX", "en-US"),
-    ("United Arab Emirates", "AE", "en-US"),
-    ("South Africa", "ZA", "en-US"),
-    ("New Zealand", "NZ", "en-US"),
+    ("United States", "US", "en-US"), ("United Kingdom", "GB", "en-GB"),
+    ("Canada", "CA", "en-CA"), ("Australia", "AU", "en-AU"),
+    ("India", "IN", "en-IN"), ("Sri Lanka", "LK", "en-LK"),
+    ("Japan", "JP", "en-US"), ("Germany", "DE", "en-US"),
+    ("France", "FR", "en-US"), ("Brazil", "BR", "en-US"),
+    ("Mexico", "MX", "en-US"), ("United Arab Emirates", "AE", "en-US"),
+    ("South Africa", "ZA", "en-US"), ("New Zealand", "NZ", "en-US"),
 ]
 PUBLISHERS = "(site:apnews.com OR site:reuters.com OR site:cnn.com)"
 
 def clean(value):
-    value = re.sub(r"<!\\[CDATA\\[(.*?)\\]\\]>", r"\\1", value or "", flags=re.S)
-    value = re.sub(r"<[^>]+>", " ", value)
-    return re.sub(r"\\s+", " ", value).strip()
+    value = re.sub(r"<[^>]*>", " ", value or "")
+    return re.sub(r"\s+", " ", html.unescape(value)).strip()
 
 def node_text(node, name):
     found = node.find(name)
@@ -47,7 +40,7 @@ def category(title, summary):
     value = (title + " " + summary).lower()
     rules = [
         ("Sports", r"sport|nba|nfl|mlb|ncaa|soccer|football|basketball|tennis"),
-        ("Technology", r"technology|artificial intelligence|\\bai\\b|software|cyber"),
+        ("Technology", r"technology|artificial intelligence|software|cyber|robot"),
         ("Business", r"business|economy|stock|market|company|finance"),
         ("Science", r"science|space|nasa|research|climate"),
         ("Crime", r"crime|arrest|murder|police|court"),
@@ -75,12 +68,10 @@ def publisher(title):
 
 stories = {}
 for country_name, country_code, language in COUNTRIES:
-    query = f'when:7d "{country_name}" {PUBLISHERS}'
     region = language.split("-")[-1]
+    query = f'when:7d "{country_name}" {PUBLISHERS}'
     params = urllib.parse.urlencode({
-        "q": query,
-        "hl": language,
-        "gl": country_code,
+        "q": query, "hl": language, "gl": country_code,
         "ceid": f"{country_code}:{region}",
     })
     feed_url = "https://news.google.com/rss/search?" + params
@@ -99,7 +90,6 @@ for country_name, country_code, language in COUNTRIES:
             if any(term in noise for term in ("sitemap", "rss feed", "podcast feed", "newsletter sign up")):
                 continue
             key = hashlib.sha256(link.encode("utf-8")).hexdigest()[:16]
-            published = parse_date(node_text(item, "pubDate"))
             story = {
                 "id": "rss-" + key,
                 "title": title,
@@ -109,9 +99,8 @@ for country_name, country_code, language in COUNTRIES:
                 "source": publisher(title),
                 "country": country_name,
                 "category": category(title, summary),
-                "published_at": published,
+                "published_at": parse_date(node_text(item, "pubDate")),
             }
-            # Keep the first country edition for a duplicate article.
             if key not in stories:
                 stories[key] = story
                 count += 1
@@ -124,7 +113,6 @@ ordered = sorted(
     key=lambda item: item.get("published_at") or "",
     reverse=True,
 )[:300]
-
 Path("news.json").write_text(
     json.dumps(ordered, ensure_ascii=False, indent=2),
     encoding="utf-8",
