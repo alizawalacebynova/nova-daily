@@ -1,4 +1,4 @@
-const countryOptions=['All Countries','United States','United Kingdom','Canada','Australia','India','Sri Lanka','Japan','Germany','France','Brazil','Mexico','United Arab Emirates','South Africa','New Zealand','International'];
+const countryOptions=['All Countries','United States','France','Mexico','United Kingdom','Australia','Canada','Brazil','New Zealand'];
 function detectCountry(textValue=''){
  const t=String(textValue).toLowerCase();
  const rules=[
@@ -107,16 +107,16 @@ function templateForStory(story){
 function renderCreate(){
  if(!selectedStory){root.innerHTML='<div class="empty-state">Choose a story from News Feed first.<br><br><button class="button button-primary" data-goto="news">Browse news</button></div>';return}
  const s=selectedStory;
- const options=[['auto','Auto — match news category'],['sports','01 · Sports News'],['breaking','02 · Breaking News'],['technology','03 · Technology News'],['world','04 · World News'],['economy','05 · Economy & Business']];
+ const options=[['general','01 · General News'],['breaking','02 · Breaking News']];
  const optionHtml=options.map(o=>'<option value="'+o[0]+'">'+o[1]+'</option>').join('');
  root.innerHTML='<div class="selected-story"><div><span class="eyebrow">'+esc(s.category)+'</span><h2>'+esc(s.title)+'</h2><p>'+esc(s.summary)+'</p></div><a href="'+esc(s.url||'#')+'" target="_blank" rel="noopener">Read source ↗</a></div>'+
  '<div class="studio-grid"><section class="tool-card"><div class="platform-head"><h3>Facebook post</h3><span class="platform-size">2–3 paragraphs</span></div><div class="field"><label>HEADLINE — EDITABLE</label><input id="fbHeadline" value="'+esc(s.title)+'"></div><div class="field"><label>NEWS POST — EDITABLE</label><textarea id="fbBody" rows="8">'+esc(makeFb(s))+'</textarea></div><div class="source-credit"><span>Source</span><a href="'+esc(s.url||'#')+'" target="_blank" rel="noopener">'+esc(s.source||'Original report')+' ↗</a></div><div class="field"><label>HASHTAGS</label><input id="fbTags" value="#NovaDaily #USNews #LatestNews"></div><button class="button button-primary" id="copyFb">Copy Facebook post</button>'+
  '<div class="embedded-thumbnail"><div class="platform-head"><h3>Facebook thumbnail</h3><span class="platform-size">3:4 · 1080 × 1440</span></div><div class="field"><label>THUMBNAIL HEADLINE</label><input id="fbImageHeadline" value="'+esc(s.title)+'"></div><canvas id="fbCanvas" width="1080" height="1440" aria-label="Facebook thumbnail preview"></canvas><button class="button" id="resetFbImage">Reset photo position</button><button class="button button-primary" id="downloadFb">Download Facebook thumbnail</button></div></section>'+
  '<section class="tool-card"><div class="platform-head"><h3>Pinterest pin</h3><span class="platform-size">SEO content</span></div><div class="field"><label>PIN TITLE — EDITABLE</label><input id="pinTitle" value="'+esc(s.title+' | NOVA DAILY')+'"></div><div class="field"><label>DESCRIPTION — EDITABLE</label><textarea id="pinDescription" rows="5">'+esc(makePin(s))+'</textarea></div><div class="source-credit"><span>Source</span><a href="'+esc(s.url||'#')+'" target="_blank" rel="noopener">'+esc(s.source||'Original report')+' ↗</a></div><div class="field"><label>KEYWORDS / TAGS</label><input id="pinTags" value="'+esc('USA News, '+s.category+', Latest News, NOVA DAILY')+'"></div><div class="field"><label>FACEBOOK POST LINK</label><input id="fbLink" placeholder="Paste Facebook post URL after publishing"></div><button class="button button-primary" id="copyPin">Copy Pinterest content</button>'+
  '<div class="embedded-thumbnail"><div class="platform-head"><h3>Pinterest thumbnail</h3><span class="platform-size">2:3 · 1080 × 1620</span></div><div class="field"><label>THUMBNAIL HEADLINE</label><input id="pinImageHeadline" value="'+esc(s.title)+'"></div><canvas id="pinCanvas" width="1080" height="1620" aria-label="Pinterest thumbnail preview"></canvas><button class="button" id="resetPinImage">Reset photo position</button><button class="button button-primary" id="downloadPin">Download Pinterest thumbnail</button></div></section></div>'+
- '<section class="tool-card template-controls"><div class="platform-head"><div><h3>Thumbnail design templates</h3><p class="feed-note">Choose one of five branded layouts. Auto selects a template based on the news category.</p></div><span class="status-badge">5 NOVA DAILY designs</span></div><div class="field"><label>SELECT THUMBNAIL TEMPLATE</label><select id="templateSelect">'+optionHtml+'</select></div><div class="image-actions"><label class="button upload-button" for="imageUpload">↑ Upload / replace photo</label><input id="imageUpload" type="file" accept="image/*" hidden><button class="button" id="copyImagePrompt">Copy image prompt</button><button class="button" id="clearImage">Remove uploaded photo</button></div><div class="field"><label>STORY-SPECIFIC IMAGE PROMPT</label><textarea id="imagePrompt" rows="4" readonly>'+esc(makeImagePrompt(s))+'</textarea></div><p class="editor-hint">Upload a clean news photo, then drag it inside either preview to reposition. Scroll over a preview to zoom. Headline areas are kept separate from the photo to prevent text overlap.</p></section>'+
+ '<section class="tool-card template-controls"><div class="platform-head"><div><h3>Thumbnail design templates</h3><p class="feed-note">Choose between the standard General News design and the urgent Breaking News design.</p></div><span class="status-badge">2 NOVA DAILY designs</span></div><div class="field"><label>SELECT THUMBNAIL TEMPLATE</label><select id="templateSelect">'+optionHtml+'</select></div><div class="image-actions"><label class="button upload-button" for="imageUpload">↑ Upload / replace photo</label><input id="imageUpload" type="file" accept="image/*" hidden><button class="button" id="copyImagePrompt">Copy image prompt</button><button class="button" id="clearImage">Remove uploaded photo</button></div><div class="field"><label>STORY-SPECIFIC IMAGE PROMPT</label><textarea id="imagePrompt" rows="4" readonly>'+esc(makeImagePrompt(s))+'</textarea></div><p class="editor-hint">Upload a clean news photo, then drag it inside either preview to reposition. Scroll over a preview to zoom. Headline areas are kept separate from the photo to prevent text overlap.</p></section>'+
  '<p class="feed-note">The selected template is used for both platforms, with each thumbnail automatically composed to its correct aspect ratio. Check the headline and image before publishing.</p>';
- $('#templateSelect').value='auto';
+ $('#templateSelect').value='general';
  $('#copyFb').onclick=()=>copy([$('#fbHeadline').value,$('#fbBody').value,'Source: '+(s.source||'Original report')+(s.url?' — '+s.url:''),$('#fbTags').value].join('\n\n'));
  $('#copyPin').onclick=()=>copy([$('#pinTitle').value,$('#pinDescription').value,'Source: '+(s.source||'Original report')+(s.url?' — '+s.url:''),$('#pinTags').value,'Facebook: '+$('#fbLink').value].filter(Boolean).join('\n\n'));
  $('#copyImagePrompt').onclick=()=>copy(makeImagePrompt(s));
@@ -134,9 +134,9 @@ function renderCreate(){
 function drawPosters(){if(!selectedStory)return;drawPoster($('#fbCanvas'),selectedStory,'facebook');drawPoster($('#pinCanvas'),selectedStory,'pinterest')}
 function drawPoster(c,story,type){
  const ctx=c.getContext('2d'),w=c.width,h=c.height,photo=uploadedPhoto,place=imagePlacement[type];
- const selected=$('#templateSelect')?.value||'auto',template=selected==='auto'?templateForStory(story):selected;
- const styles={sports:{base:'#101522',accent:'#ffd21a',red:'#e31d2b'},breaking:{base:'#080d18',accent:'#ffd21a',red:'#e31d2b'},technology:{base:'#071a2b',accent:'#40d9ff',red:'#e31d2b'},world:{base:'#101b31',accent:'#ffd21a',red:'#e31d2b'},economy:{base:'#17170f',accent:'#ffd21a',red:'#e31d2b'}};
- const st=styles[template]||styles.world;
+ const selected=$('#templateSelect')?.value||'general',template=selected;
+ const styles={general:{base:'#101b31',accent:'#ffd21a',red:'#d92335'},breaking:{base:'#19090d',accent:'#fff1b8',red:'#ed1c2e'}};
+ const st=styles[template]||styles.general;
  // Locked geometry: masthead 0-19%, category 19-23.5%, photo 23.5-62%, headline 63.5-92%, footer 93-100%.
  const photoTop=h*.235,photoH=h*.385,panelY=h*.635,panelH=h*.285;
  ctx.clearRect(0,0,w,h);ctx.fillStyle=st.base;ctx.fillRect(0,0,w,h);
@@ -154,7 +154,7 @@ function drawPoster(c,story,type){
   const shade=ctx.createLinearGradient(0,photoTop,0,photoTop+photoH);shade.addColorStop(0,'#06102010');shade.addColorStop(1,'#06102055');ctx.fillStyle=shade;ctx.fillRect(0,photoTop,w,photoH);
  }else{
   const g=ctx.createLinearGradient(0,photoTop,w,photoTop+photoH);g.addColorStop(0,st.red);g.addColorStop(1,st.base);ctx.fillStyle=g;ctx.fillRect(0,photoTop,w,photoH);
-  ctx.fillStyle=st.accent;ctx.globalAlpha=.18;ctx.font='900 '+Math.round(w*.12)+'px Arial';ctx.fillText(template==='sports'?'SPORTS':template==='technology'?'TECH':template==='economy'?'MARKETS':template==='breaking'?'ALERT':'WORLD',w*.06,photoTop+photoH*.58);ctx.globalAlpha=1;
+  ctx.fillStyle=st.accent;ctx.globalAlpha=.18;ctx.font='900 '+Math.round(w*.12)+'px Arial';ctx.fillText(template==='breaking'?'ALERT':'GENERAL',w*.06,photoTop+photoH*.58);ctx.globalAlpha=1;
  }
  ctx.fillStyle=template==='breaking'?st.red:'#090c12';ctx.fillRect(0,panelY,w,panelH);
  ctx.fillStyle=st.accent;ctx.fillRect(w*.06,panelY+h*.025,w*.88,h*.006);
