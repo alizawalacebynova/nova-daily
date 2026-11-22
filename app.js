@@ -20,7 +20,35 @@ drawPosters();$('#downloadFb').onclick=()=>downloadCanvas('fbCanvas','nova-daily
 function makeFb(s){return s.summary+'\n\nRead the original report for more details and the latest updates. NOVA DAILY will continue following this story.'}
 function makePin(s){return 'Stay informed about '+s.category.toLowerCase()+' news in the United States. '+s.summary+' Read the full update on NOVA DAILY and visit the original reporting for more details.'}
 function drawPosters(){const s=selectedStory;if(!s)return;drawPoster($('#fbCanvas'),s,'facebook');drawPoster($('#pinCanvas'),s,'pinterest')}
-function drawPoster(c,s,type){const ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'#14233d');g.addColorStop(.55,'#111722');g.addColorStop(1,'#05080e');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.fillStyle='#e31d2b';ctx.fillRect(0,0,w,Math.round(h*.018));ctx.fillStyle='#fff';ctx.font='bold '+Math.round(w*.075)+'px Arial';ctx.fillText('NOVA',w*.07,h*.105);ctx.fillStyle='#ffd21a';ctx.font='bold '+Math.round(w*.055)+'px Arial';ctx.fillText('DAILY',w*.07,h*.15);ctx.fillStyle='#e31d2b';ctx.fillRect(w*.07,h*.19,w*.23,h*.009);ctx.fillStyle='#f5c400';ctx.font='bold '+Math.round(w*.035)+'px Arial';ctx.fillText(s.category.toUpperCase()+' / USA NEWS',w*.07,h*.25);const title=$('#fbHeadline')?.value||s.title;ctx.fillStyle='#fff';ctx.font='900 '+Math.round(w*(type==='facebook'?.064:.068))+'px Arial';wrap(ctx,title,w*.07,h*.36,w*.86,Math.round(w*.078),type==='facebook'?5:6);ctx.fillStyle='#f5c400';ctx.fillRect(w*.07,h*(type==='facebook'?.70:.73),w*.86,h*.006);ctx.fillStyle='#fff';ctx.font='bold '+Math.round(w*.034)+'px Arial';ctx.fillText(type==='facebook'?'LATEST UPDATE':'READ THE FULL STORY',w*.07,h*.78);ctx.font='500 '+Math.round(w*.025)+'px Arial';ctx.fillStyle='#c7d0df';ctx.fillText('AMERICA. INFORMED. EVERY DAY.',w*.07,h*.84);ctx.fillStyle='#e31d2b';ctx.fillRect(0,h*.92,w,h*.08);ctx.fillStyle='#fff';ctx.font='bold '+Math.round(w*.04)+'px Arial';ctx.fillText('NOVA DAILY',w*.07,h*.97);ctx.fillStyle='#f5c400';ctx.fillRect(w*.82,h*.945,w*.1,h*.009)}
+function drawPoster(c,s,type){
+ const ctx=c.getContext('2d'),w=c.width,h=c.height;
+ const paint=(photo)=>{
+  ctx.clearRect(0,0,w,h);
+  const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'#14233d');g.addColorStop(.55,'#111722');g.addColorStop(1,'#05080e');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  const photoHeight=h*(type==='facebook'?.56:.60);
+  if(photo){
+   const scale=Math.max(w/photo.width,photoHeight/photo.height),iw=photo.width*scale,ih=photo.height*scale;
+   ctx.save();ctx.beginPath();ctx.rect(0,0,w,photoHeight);ctx.clip();ctx.drawImage(photo,(w-iw)/2,(photoHeight-ih)/2,iw,ih);ctx.restore();
+   const shade=ctx.createLinearGradient(0,0,0,photoHeight);shade.addColorStop(0,'#06102066');shade.addColorStop(.55,'#06102022');shade.addColorStop(1,'#061020f2');ctx.fillStyle=shade;ctx.fillRect(0,0,w,photoHeight);
+  }
+  ctx.fillStyle='#e31d2b';ctx.fillRect(0,0,w,Math.round(h*.018));
+  ctx.fillStyle='#fff';ctx.font='bold '+Math.round(w*.075)+'px Arial';ctx.fillText('NOVA',w*.07,h*.105);
+  ctx.fillStyle='#ffd21a';ctx.font='bold '+Math.round(w*.055)+'px Arial';ctx.fillText('DAILY',w*.07,h*.15);
+  ctx.fillStyle='#e31d2b';ctx.fillRect(w*.07,h*.19,w*.23,h*.009);
+  ctx.fillStyle='#f5c400';ctx.font='bold '+Math.round(w*.035)+'px Arial';ctx.fillText(s.category.toUpperCase()+' / USA NEWS',w*.07,h*.25);
+  const title=$('#fbHeadline')?.value||s.title;
+  ctx.fillStyle='#fff';ctx.font='900 '+Math.round(w*(type==='facebook'?.064:.068))+'px Arial';
+  wrap(ctx,title,w*.07,h*(type==='facebook'?.65:.68),w*.86,Math.round(w*.078),type==='facebook'?5:6);
+  ctx.fillStyle='#f5c400';ctx.fillRect(w*.07,h*(type==='facebook'?.83:.84),w*.86,h*.006);
+  ctx.fillStyle='#fff';ctx.font='bold '+Math.round(w*.034)+'px Arial';
+  ctx.fillText(type==='facebook'?'LATEST UPDATE':'READ THE FULL STORY',w*.07,h*.89);
+  ctx.font='500 '+Math.round(w*.025)+'px Arial';ctx.fillStyle='#c7d0df';
+  ctx.fillText('AMERICA. INFORMED. EVERY DAY.',w*.07,h*.92);
+  ctx.fillStyle='#e31d2b';ctx.fillRect(0,h*.95,w,h*.05);
+  ctx.fillStyle='#fff';ctx.font='bold '+Math.round(w*.04)+'px Arial';ctx.fillText('NOVA DAILY',w*.07,h*.985);
+ };
+ if(s.image_url){const img=new Image();img.crossOrigin='anonymous';img.onload=()=>paint(img);img.onerror=()=>paint(null);img.src=s.image_url;}else paint(null);
+}
 function wrap(ctx,t,x,y,max,lineHeight,maxLines){let words=t.split(/\s+/),line='',n=0;for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>max&&line){ctx.fillText(line,x,y);line=word;y+=lineHeight;n++;if(n>=maxLines-1)break}else line=test}if(n<maxLines){if(ctx.measureText(line).width>max){while(line&&ctx.measureText(line+'…').width>max)line=line.slice(0,-1);line+='…'}ctx.fillText(line,x,y)}}
 function downloadCanvas(id,name){const c=$('#'+id),a=document.createElement('a');a.download=name;a.href=c.toDataURL('image/png');a.click();toast('Image download started')}
 function copy(t){if(navigator.clipboard?.writeText)navigator.clipboard.writeText(t).then(()=>toast('Copied to clipboard')).catch(()=>fallbackCopy(t));else fallbackCopy(t)}
