@@ -9,6 +9,35 @@ from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 
+COUNTRIES = [
+    ("United States", "US", "en-US"), ("United Kingdom", "GB", "en-GB"),
+    ("Canada", "CA", "en-CA"), ("Australia", "AU", "en-AU"),
+    ("India", "IN", "en-IN"), ("Sri Lanka", "LK", "en-LK"),
+    ("Japan", "JP", "en-US"), ("Germany", "DE", "en-US"),
+    ("France", "FR", "en-US"), ("Brazil", "BR", "en-US"),
+    ("Mexico", "MX", "en-US"), ("United Arab Emirates", "AE", "en-US"),
+    ("South Africa", "ZA", "en-US"), ("New Zealand", "NZ", "en-US"),
+]
+SOURCES = "site:apnews.com OR site:reuters.com OR site:cnn.com"
+FEEDS = []
+for country_name, country_code, language in COUNTRIES:
+    query = f'when:7d "{country_name}" ({SOURCES})'
+    params = urllib.parse.urlencode({
+        "q": query, "hl": language, "gl": country_code,
+        "ceid": f"{country_code}:{language.split('-')[-1]}"
+    })
+    FEEDS.append((country_name, f"https://news.google.com/rss/search?{params}", country_name))
+mport hashlib
+import json
+import re
+import urllib.request
+import urllib.parse
+import time
+import xml.etree.ElementTree as ET
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
+from pathlib import Path
+
 FEEDS = [
     ("Associated Press (AP)", "https://news.google.com/rss/search?q=when%3A24h+site%3Aapnews.com&hl=en-US&gl=US&ceid=US%3Aen"),
     ("Reuters", "https://news.google.com/rss/search?q=when%3A24h+site%3Areuters.com&hl=en-US&gl=US&ceid=US%3Aen"),
@@ -128,7 +157,7 @@ def parse_date(value):
         return None
 
 stories = {}
-for source_name, feed_url in FEEDS:
+for source_name, feed_url, country_name in FEEDS:
     request = urllib.request.Request(feed_url, headers={"User-Agent": "NOVA-DAILY/1.0"})
     try:
         with urllib.request.urlopen(request, timeout=25) as response:
