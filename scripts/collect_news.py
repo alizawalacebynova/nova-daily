@@ -22,6 +22,20 @@ def text(node, name):
     found = node.find(name)
     return clean(found.text if found is not None and found.text else "")
 
+def image_url(item):
+    # Use thumbnail/media image URLs supplied by the RSS feed.
+    for element in item.iter():
+        tag = element.tag.rsplit("}", 1)[-1].lower()
+        if tag in ("thumbnail", "content", "enclosure"):
+            candidate = element.attrib.get("url", "")
+            if candidate.startswith(("https://", "http://")):
+                return candidate
+    description = text(item, "description")
+    match = re.search(r"""<img[^>]+src=["']([^"']+)["']""", description, re.I)
+    if match and match.group(1).startswith(("https://", "http://")):
+        return match.group(1)
+    return None
+
 def category(title, summary):
     t = (title + " " + summary).lower()
     rules = [
@@ -75,6 +89,7 @@ for source_name, feed_url in FEEDS:
                 "id": "rss-" + key,
                 "title": title,
                 "summary": summary[:500],
+                "image_url": image_url(item),
                 "url": link,
                 "source": source_name,
                 "category": category(title, summary),
