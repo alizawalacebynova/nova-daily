@@ -79,14 +79,14 @@ def publisher(title):
 def is_relevant_to_country(country_name, title, summary):
     text = title + " " + summary
     for keyword in COUNTRY_KEYWORDS[country_name]:
-        if re.search(r"(?<!\\w)" + re.escape(keyword) + r"(?!\\w)", text, flags=re.IGNORECASE):
+        if re.search(r"(?<!\w)" + re.escape(keyword) + r"(?!\w)", text, flags=re.IGNORECASE):
             return True
     return False
 
 def is_generic_section_page(title):
     # Exclude navigation/edition pages such as "England - AP News".
     return bool(re.fullmatch(
-        r"[^|:–—-]{2,55}\\s*[-|:–—]\\s*(?:AP News|Reuters|CNN)",
+        r"[^|:–—-]{2,55}\s*[-|:–—]\s*(?:AP News|Reuters|CNN)",
         title.strip(),
         flags=re.IGNORECASE,
     ))
