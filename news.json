@@ -418,17 +418,6 @@
     "published_at": "2026-11-21T06:15:00+00:00"
   },
   {
-    "id": "rss-360e082ed710fd3c",
-    "title": "Leaders of Mexican drug cartel and 19 others indicted for smuggling guns, drugs and people - AP News",
-    "summary": "Leaders of Mexican drug cartel and 19 others indicted for smuggling guns, drugs and people AP News",
-    "image_url": null,
-    "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxPOVNBbTgwdDFwMDhPNDMyQVZqbzU0R0dyQ05FbVk2V1NnbGF5clFpM2ZjQjhZRlVCeVQycndlX282Y21KVC1SQTdVN0Q0b1JHT2R6UjVWRVVOYzVrcGpqc01WdUk3emZ6c0xMc3RNY1RBN1Bva1lKLWVsQm5RTm01dDRlbFppczhqUjZNUUF6ZjFoVGFk?oc=5",
-    "source": "Associated Press (AP)",
-    "country": "Mexico",
-    "category": "World News",
-    "published_at": "2026-11-21T04:21:00+00:00"
-  },
-  {
     "id": "rss-fca9eb5b01942501",
     "title": "Rahul scores century, Gill falls just short, as India take lead in Wellington - Reuters",
     "summary": "Rahul scores century, Gill falls just short, as India take lead in Wellington Reuters",
@@ -462,6 +451,17 @@
     "published_at": "2026-11-20T23:29:43+00:00"
   },
   {
+    "id": "rss-b84c1c440c15d16b",
+    "title": "Texas prisoner moans in pain for minutes during unusual lethal injection, witnesses say - Reuters",
+    "summary": "Texas prisoner moans in pain for minutes during unusual lethal injection, witnesses say Reuters",
+    "image_url": null,
+    "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPMjg2cDh2YzFnTXQ2eW5yMF9DUXl0bVJtZjFDVlJLV3NEVUZJMUdqTXpQWE5CQ1ctMS1ENG5XdHZlQWpoQ05rMVJ6a1F2dEVRQkROSDFuLUViWTlnSjlacWU2M0FQbVNBRHFWYXVjM1JvV1hpM1A1UnRlbVFZNWtLdmxTYVo3Q2dUc2hEeDlZVUpiX0dob21UMWcyYW1JRy1NUHpVSVE2YkVzdFNmSGgxTHR1UHNydWdmVTE4YlNyeUNWUQ?oc=5",
+    "source": "Reuters",
+    "country": "United States",
+    "category": "World News",
+    "published_at": "2026-11-20T23:18:51+00:00"
+  },
+  {
     "id": "rss-8fc0194204e17d7f",
     "title": "Brazil ex-President Bolsonaro hospitalized with intestinal obstruction - Reuters",
     "summary": "Brazil ex-President Bolsonaro hospitalized with intestinal obstruction Reuters",
@@ -473,17 +473,6 @@
     "published_at": "2026-11-20T23:15:48+00:00"
   },
   {
-    "id": "rss-1e9e42d96188e3a9",
-    "title": "Head of a Canadian security forum warns the world can no longer count on US leadership - AP News",
-    "summary": "Head of a Canadian security forum warns the world can no longer count on US leadership AP News",
-    "image_url": null,
-    "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQeGUtWHoyZV9vczFLX2RpQ0UtYnE2OEwzamQ2cHR3OWZ3TzlrU3Z2RkYzUG1LYWFHVzBNVElPMFBKSWZ6aWV3QWwxUDZXWWFSSUV6Qmw5YV9IS0QwbXBIT0d3R3hRaUVIdFRXZ0N1ODVoNVJyelZVOWh0bi1tN1pMMjhOTFMtRURsYVg1dlBoOGVGLVhiRVRoMkF1UmJacERlYVlxbFQ3RGhtUQ?oc=5",
-    "source": "Associated Press (AP)",
-    "country": "Canada",
-    "category": "World News",
-    "published_at": "2026-11-20T22:48:00+00:00"
-  },
-  {
     "id": "rss-2b5c2b86fbddc644",
     "title": "New caravan of about 300 migrants crosses into southern Mexico - Reuters",
     "summary": "New caravan of about 300 migrants crosses into southern Mexico Reuters",
@@ -493,6 +482,17 @@
     "country": "Mexico",
     "category": "World News",
     "published_at": "2026-11-20T21:52:09+00:00"
+  },
+  {
+    "id": "rss-1e9e42d96188e3a9",
+    "title": "Head of a Canadian security forum warns the world can no longer count on US leadership - AP News",
+    "summary": "Head of a Canadian security forum warns the world can no longer count on US leadership AP News",
+    "image_url": null,
+    "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQeGUtWHoyZV9vczFLX2RpQ0UtYnE2OEwzamQ2cHR3OWZ3TzlrU3Z2RkYzUG1LYWFHVzBNVElPMFBKSWZ6aWV3QWwxUDZXWWFSSUV6Qmw5YV9IS0QwbXBIT0d3R3hRaUVIdFRXZ0N1ODVoNVJyelZVOWh0bi1tN1pMMjhOTFMtRURsYVg1dlBoOGVGLVhiRVRoMkF1UmJacERlYVlxbFQ3RGhtUQ?oc=5",
+    "source": "Associated Press (AP)",
+    "country": "Canada",
+    "category": "World News",
+    "published_at": "2026-11-20T21:12:44+00:00"
   },
   {
     "id": "rss-0d34c15d488c656b",
@@ -636,17 +636,6 @@
     "country": "Canada",
     "category": "Business",
     "published_at": "2026-11-20T17:34:51+00:00"
-  },
-  {
-    "id": "rss-fd68cc027de7c95f",
-    "title": "Tesla proposes $3.1 bln Texas polysilicon plant for solar manufacturing - Reuters",
-    "summary": "Tesla proposes $3.1 bln Texas polysilicon plant for solar manufacturing Reuters",
-    "image_url": null,
-    "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQNHlYSGVWRlplU3QwM1lpeFJ6ZGZsYnN4ZHNjeUp4d1M5ekhZUWlWMU5aVFRqeFlPUkRjV2h1T04tcVcySTM3bU9lR2d5d0tLUm9rcEEzYmN6YmZjaGR2ZXhRYTVBRl95STl1VWlRb0kzVFhCa3h4RTh3azhsVjNaTTlLOFZqUnRYdl9NWHlEeWdETHk1UC1yMmp4TmNKbFlyclp4THNYSmVzdEEtaWNfMXhJSi1uR3NL?oc=5",
-    "source": "Reuters",
-    "country": "United States",
-    "category": "World News",
-    "published_at": "2026-11-20T17:25:43+00:00"
   },
   {
     "id": "rss-deeefb56d36d424d",
@@ -847,15 +836,15 @@
     "published_at": "2026-11-20T11:03:43+00:00"
   },
   {
-    "id": "rss-77cfef32ba49c0a0",
-    "title": "Magnitude 5.1 earthquake strikes near California's Monterey County, USGS says - Reuters",
-    "summary": "Magnitude 5.1 earthquake strikes near California's Monterey County, USGS says Reuters",
+    "id": "rss-9af42d50f1aa112a",
+    "title": "French regulator defends applying political balance rules to influencers - Reuters",
+    "summary": "French regulator defends applying political balance rules to influencers Reuters",
     "image_url": null,
-    "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxNM0JQZlN6SGkwam1OZkRINnJITDdYX25FenEyTmlOYWFtRy0yRXE0Uk5LcWs3ZldQMGo1ZXlrbXd2elJjM19pOEg0cW1lVVZXdU5VS19vd3pOQWFkTXNoSmFvRTRqUFBBbVE2TWZKRC1qUTF0VUdmdUU1OFhZMXlZZTNmZXN5a1FQU0IwUUw1ZTVOSk9MeENkQ3UyVlpMUmRydFdEWHZCLVVuSjN6dENGSDNiOENWdDNONkVyQkR4ZmxpLUV5SmoyOVMtWQ?oc=5",
+    "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxNZFBCNTQwYUNNcWFoOEhoUjNJRGxoTExsWkI4VmV6dW9iVjF0WmZhLXVDQzhITTE0SndzLUVmTEdiTGw5cTd6OFc0NTVaZDhNbWtyTG94ZllVQVNvNjZhRkxDd21vS19PbGZfMjBYRWVfajVCdU9KZVlhbmFyY0hBOTJnZFp2Nk9rRmhtUWZrOTIzb2lrbUw2WWdHLTJXR0gtaUZKb0tyRWlDT2hvcjFzUDJiemtMVExaZWVBUFVVZW1TVWRzYkRJ?oc=5",
     "source": "Reuters",
-    "country": "United States",
-    "category": "World News",
-    "published_at": "2026-11-20T07:07:00+00:00"
+    "country": "France",
+    "category": "Sports",
+    "published_at": "2026-11-20T10:39:43+00:00"
   },
   {
     "id": "rss-15136ae97cc8cb0e",
@@ -2310,17 +2299,6 @@
     "published_at": "2026-11-16T17:04:30+00:00"
   },
   {
-    "id": "rss-08327e42a4f8c755",
-    "title": "Mexican drug kingpin Félix Gallardo, founder of Guadalajara cartel, dies at 80 - AP News",
-    "summary": "Mexican drug kingpin Félix Gallardo, founder of Guadalajara cartel, dies at 80 AP News",
-    "image_url": null,
-    "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQQ0pTSW9CSTJpb0lLX3VfSVBCdDVkOVNrUUdfang5QmRMVGFNeEN3Wlgwcm8tNmRFa3hvMkhaaldEODR6bUI3ekdncFlGN1dWWEVzNUlfbnFiNW83VEpYaWZqQ3gxZkI0aEVkRzZ1X3JneVRvUGZWdzlJQ2l2cmlPSWZyQzlKYzAteWNSTWJJXzJhcVVDcWlvN00wVGpvVzJhOFE3Z0MtQWpkZw?oc=5",
-    "source": "Associated Press (AP)",
-    "country": "Mexico",
-    "category": "World News",
-    "published_at": "2026-11-16T17:01:00+00:00"
-  },
-  {
     "id": "rss-7f01bedb093004db",
     "title": "Capital Group Gbl Developed Eqty Sel ETF (Canada) (CAPQ.TO) | Stock Price & Latest News - Reuters",
     "summary": "Capital Group Gbl Developed Eqty Sel ETF (Canada) (CAPQ.TO) | Stock Price & Latest News Reuters",
@@ -2420,83 +2398,6 @@
     "published_at": "2026-11-16T07:14:00+00:00"
   },
   {
-    "id": "rss-d2b4d493fadaa011",
-    "title": "Russia to miss World Juniors over Canada restrictions, IIHF confirms - Reuters",
-    "summary": "Russia to miss World Juniors over Canada restrictions, IIHF confirms Reuters",
-    "image_url": null,
-    "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPMkxDRkFmbXRVd1h3dV84NTF3cDZadjRjYUtqUHpkWXlVVXIzX3lvVXI5Z25BUkR6c0lJLVJpZkQxSzhEWmNZS2RFX1pJZWxkOXMxcHUxVUZvdGZvZDR1SUtMOUNKM2g4RTdEaWJtaE4wX0RacU55SndhaEoxWG1VNGVybFpvMVdwelU2TzhxWHNxbTZYOFlIbGo1QkM4c3c2aVVFWmtudXFxYnhObkYyb05B?oc=5",
-    "source": "Reuters",
-    "country": "Canada",
-    "category": "World News",
-    "published_at": "2026-11-15T23:50:55+00:00"
-  },
-  {
-    "id": "rss-68635dbef832919f",
-    "title": "Notorious Mexican drug lord, who was convicted of killing US DEA agent, dies at 80 - CNN",
-    "summary": "Notorious Mexican drug lord, who was convicted of killing US DEA agent, dies at 80 CNN",
-    "image_url": null,
-    "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQWTZ6djlUZzI4OGVmLW9jaVM2azFsUy10SnJpTmtUSXVMamZsRzVLTTNVcUdzVEFmRlZZX3ZwOFppUjR6QVVraTJjNzdkRGZ0Q2VBOEVHRk1zNWJrTlhTSllxT0lEQUFZMXhRbjBlUkFGeFVPUDRjRmxUemNZbGNaWA?oc=5",
-    "source": "CNN",
-    "country": "Mexico",
-    "category": "World News",
-    "published_at": "2026-11-15T23:37:37+00:00"
-  },
-  {
-    "id": "rss-a4208380f6acdab1",
-    "title": "Notorious Mexican drug lord, who was convicted of killing US DEA agent, dies at 80 - CNN",
-    "summary": "Notorious Mexican drug lord, who was convicted of killing US DEA agent, dies at 80 CNN",
-    "image_url": null,
-    "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxORGViYUJndXdnbERIak84OGh2UnZBanZuM1o5SVF2REtBSnRPLU9wTjkyX3JQM2R6dUJvY2p3dEJwbUt5MDdJc25VTzl0LXpCZnpEaXdUYmVXc3F4OEJjMmRTZzhqMWoxRmpKMWwtaFdoZlctLUZHYXd0WlFYSjRmUmtYamlRQQ?oc=5",
-    "source": "CNN",
-    "country": "Mexico",
-    "category": "World News",
-    "published_at": "2026-11-15T23:37:37+00:00"
-  },
-  {
-    "id": "rss-f0d2321db74c7216",
-    "title": "Mexico's Guadalajara cartel founder dies in hospital aged 80 - Reuters",
-    "summary": "Mexico's Guadalajara cartel founder dies in hospital aged 80 Reuters",
-    "image_url": null,
-    "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxOZXRlTGlzNmUtbEZnZkZNVDhBYlZmdmxOdVJqaGlSaEMzQ04wb3duRUwyY1VDUjJiamE1OFVWNHl4T1ZhYnhlTU1xRDBzWGszVzAtRmxKek42bzQwVWNfRHpadXY0RllwcGZtcWNLZ0Z6bEg2VFlTallPQjFwd191YVhoLU5YUEttRktMeWxOdkp0YVh4UjFzUHBPMmExeXU4NUZnQk5wSlVKMFVXTVg3bG5oRl9zaU5USW52NE45NVo?oc=5",
-    "source": "Reuters",
-    "country": "Mexico",
-    "category": "World News",
-    "published_at": "2026-11-15T23:08:27+00:00"
-  },
-  {
-    "id": "rss-714be568112514fc",
-    "title": "United States and Canada set up another women's world championship final - Reuters",
-    "summary": "United States and Canada set up another women's world championship final Reuters",
-    "image_url": null,
-    "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxNcEVhcmNkck5BM3RGNDh2WE00cHRydmNYUENvYmlzb00xVXVjNlBTcmpmZGpHVnRYVV9LdVBFbEJJN1pyUDJGdFRJVThSQTdvVWJ4eElaWGlTaUY3SklrdEM4R0p3cFRFVTlJeVI1ZkpPWHlhVWl6ekEtNEF4Y3ZHQXJEWGpWeGgxZUJuWDJtYUw2dHQwa1RlTjNNYTUwSG5haVlUMTNVUkpiazZhMU9scG50Tk0yVkdq?oc=5",
-    "source": "Reuters",
-    "country": "Canada",
-    "category": "World News",
-    "published_at": "2026-11-15T22:09:01+00:00"
-  },
-  {
-    "id": "rss-f939184761f24469",
-    "title": "United States blanks Finland 5-0 to set up women’s hockey worlds final against Canada - AP News",
-    "summary": "United States blanks Finland 5-0 to set up women’s hockey worlds final against Canada AP News",
-    "image_url": null,
-    "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPbWh3VXg2QXRGSU9hNGxFUTdnd21pOE9UZHp1a2NBSDVLTUQ3cjk3TGVMZTNhaEpPZWRzX2FfczFHR3RGNWt5N3k2cUd4LXpJc2swVXVMZm8tV2xETHM0c0FZYzRmUTdjMEVfb0NRZmduT3BSaUpzREJMV2diMS1ONXh4THBrWGFBTFlHazNOdVFTZzJDcHk1UUplUHVPOHhWSEpWRzVpeWE?oc=5",
-    "source": "Associated Press (AP)",
-    "country": "Canada",
-    "category": "World News",
-    "published_at": "2026-11-15T22:03:00+00:00"
-  },
-  {
-    "id": "rss-810cdc082ac11ede",
-    "title": "IIHF says Russia won’t take part in world junior hockey tournament in Canada - AP News",
-    "summary": "IIHF says Russia won’t take part in world junior hockey tournament in Canada AP News",
-    "image_url": null,
-    "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxNTkR0N1VGMnNJVFFmaXJxR1JRZk9uZElYN2thVWFPaHdkZ3Q0QWVJY0M3M09QM19RMzFMY3VNOG1CNnV3LUYxUnRXZVlBZDZtbE4wcElyNXBpTnY2OEdEMnROUl90dmt6enlOTUEwTHI4d0xSbHZvZWJRTGJvY2czTmtVVDFXODZUQklZYW9YVVl4aVdWQnlIMzA4d3lEZHRlOThUQnRPOA?oc=5",
-    "source": "Associated Press (AP)",
-    "country": "Canada",
-    "category": "World News",
-    "published_at": "2026-11-15T21:49:00+00:00"
-  },
-  {
     "id": "rss-005abd754344c905",
     "title": "Canada police in standoff with protesters blocking bridge to U.S - Reuters",
     "summary": "Canada police in standoff with protesters blocking bridge to U.S Reuters",
@@ -2508,6 +2409,17 @@
     "published_at": "2025-10-28T15:15:36+00:00"
   },
   {
+    "id": "rss-e5616e6c4c0fffc8",
+    "title": "The U.S.-Mexico border now - Reuters",
+    "summary": "The U.S.-Mexico border now Reuters",
+    "image_url": null,
+    "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNeHIzcndSOHljNU1aM1oyNUxfNm1GVE0tU0h4ZFZIaFlZR3ZJekVZM1hqenhsR1Q0OFllNmF5dTZnMHJYdlR5SGd6d2ZvclcxLWU4VDY4STQ0cDNQQmRCaERCYXhnZFk4YmJQQkdrRUZJT3NXU0NsVFBFNXQ0b09DOQ?oc=5",
+    "source": "Reuters",
+    "country": "Mexico",
+    "category": "World News",
+    "published_at": "2025-10-23T23:35:02+00:00"
+  },
+  {
     "id": "rss-6fccf475bccb1276",
     "title": "Argentina beat Brazil 1-0 to win Copa America, first major title in 28 years - Reuters",
     "summary": "Argentina beat Brazil 1-0 to win Copa America, first major title in 28 years Reuters",
@@ -2517,6 +2429,39 @@
     "country": "Brazil",
     "category": "World News",
     "published_at": "2024-02-04T08:28:26+00:00"
+  },
+  {
+    "id": "rss-c2c5a3ff9294385e",
+    "title": "In photos: Banksy exhibit opens in Mexico City - Reuters",
+    "summary": "In photos: Banksy exhibit opens in Mexico City Reuters",
+    "image_url": null,
+    "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNM21OVXJSVHZoRklPcDUzb3YzM2JWM2p6NE5acllWeW9maXl3TzFGRDdWU0hPN1hScnYzRmtvZHdSZm5KZFNaWk1Zc0lKSnlIbDJoR2VFa29QMWkwclpmVTFBdjdRRjN6dkFmRFh3VnFjSGo2ckU2TV9wZmQzZVRfRzZ2SU53Wm1VVDdKVEk0SzQ0a3pMcVE?oc=5",
+    "source": "Reuters",
+    "country": "Mexico",
+    "category": "World News",
+    "published_at": "2024-01-11T07:15:18+00:00"
+  },
+  {
+    "id": "rss-61c33d4207529f2f",
+    "title": "Protests erupt in Brazil after Black man beaten to death at supermarket - Reuters",
+    "summary": "Protests erupt in Brazil after Black man beaten to death at supermarket Reuters",
+    "image_url": null,
+    "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE43TUhZM2dEdXpOSFcza1pzcHFFajlBaGFvckMtcVJtbnBsWjJaMUJYaVhXbHpWNGREbDNQTHh1NndXYk5VcmdiOTdMMmlBWEJWb0FhVUU4WGNjT3VrcXBn?oc=5",
+    "source": "Reuters",
+    "country": "Brazil",
+    "category": "Business",
+    "published_at": "2023-12-22T08:28:53+00:00"
+  },
+  {
+    "id": "rss-d3159c2277ba5017",
+    "title": "Private link on U.S.-Mexico border - Reuters",
+    "summary": "Private link on U.S.-Mexico border Reuters",
+    "image_url": null,
+    "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBPaEVjVnVLa1lWZFl1a1BWQ1hjMWkxRlc1Vkt6ZENMZmcwSDRjVjJlSWppRDVFczdkcnBXWnYxNkRxZnRvazZyVUlXUHVFOUNDNW1DeGpJNXVTdjFoQWE4?oc=5",
+    "source": "Reuters",
+    "country": "Mexico",
+    "category": "World News",
+    "published_at": "2023-12-01T01:21:44+00:00"
   },
   {
     "id": "rss-bee676eb2eb0397b",
